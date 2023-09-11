@@ -1,4 +1,90 @@
 {
+  "users": [
+    {
+      "login": "vvitass",
+      "password": "dasdas",
+      "email": "vit.vit.00.000@gmail.com",
+      "id": 1
+    },
+    {
+      "login": "vitas",
+      "password": "dasdasdasd",
+      "email": "vit.vit.00.000@gail.com",
+      "id": 2
+    },
+    {
+      "login": "ddasdasd",
+      "password": "dasdasda",
+      "email": "asdasdasd@adas.ru",
+      "id": 3
+    },
+    {
+      "login": "ddasdasdaaa",
+      "password": "2ae46a41644ec0aca3a078de9df9b21d",
+      "email": "asdasadasd@adas.ru",
+      "id": 4
+    },
+    {
+      "login": "asdasdas",
+      "password": "63373b41cf913e9f9b3226b4a0452737",
+      "email": "vit.vit.00.a000@gmail.com",
+      "id": 5
+    },
+    {
+      "login": "vvitassaa",
+      "password": "63373b41cf913e9f9b3226b4a0452737",
+      "email": "vit.vit.00.0s00@gmail.com",
+      "id": 6
+    },
+    {
+      "login": "vvitassa",
+      "password": "d9747afcaf848302b7064db15c38df84",
+      "email": "vit.vit.0a0.000@gmail.com",
+      "id": 7
+    },
+    {
+      "login": "asdasdsa",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "vit.vit.00s.000@gmail.com",
+      "id": 8
+    },
+    {
+      "login": "asdasdsaa",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "vit.vit.a00s.000@gmail.com",
+      "id": 9
+    },
+    {
+      "login": "asdasdsaaa",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "viat.vit.a00s.000@gmail.com",
+      "id": 10
+    },
+    {
+      "login": "asdasdsaaaф",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "viat.vit.a00s.00-0@gmail.com",
+      "id": 11
+    },
+    {
+      "login": "asфdasdsaaaф",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "viat.it.a00s.00-0@gmail.com",
+      "id": 12
+    },
+    {
+      "login": "asіфdasdsaaaф",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "iat.it.a00s.00-0@gmail.com",
+      "id": 13
+    },
+    {
+      "login": "adasda",
+      "password": "bff149a0b87f5b0e00d9dd364e9ddaa0",
+      "email": "iat.ist.a00s.00-0@gmail.com",
+      "id": 14
+    }
+  ],
   "posts": [
     {
       "id": 1,

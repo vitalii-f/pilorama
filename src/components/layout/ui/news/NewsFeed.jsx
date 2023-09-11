@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import styled from "styled-components";
-import { NewsService } from "../../../../services/news.service";
+import ArticleOptionsMenu from "./ArticleOptionsMenu";
 
 const Paginate = styled(ReactPaginate).attrs({
   activeClassName: "active",
@@ -38,31 +37,14 @@ const Paginate = styled(ReactPaginate).attrs({
 function NewsArticles({ news }) {
   const [itemOffset, setItemOffset] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(2);
-  const [currentPage, setCurrentPage] = useState(0);
 
   const [elementVisibility, setElementVisibility] = useState({
-    invisibleStyle:
-      "absolute z-10 flex flex-col invisible p-2 gap-y-1 bg-stone-800",
-    visibleStyle:
-      "absolute z-10 flex flex-col visible p-2 gap-y-1 bg-stone-800",
     id: null,
     togled: false,
   });
 
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation(
-    ["remove article"],
-    (data) => NewsService.removeArticle(data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("remove article");
-      },
-    }
-  );
-
   if (!Array.isArray(news))
-    return <h2 className="text-2xl text-red-400">Error: Incorrect data!</h2>;
+    return <h2 className="text-2xl text-red-400">Error: Incorrect data! Try reload page.</h2>;
 
   const endOffset = +itemOffset + +itemsPerPage;
   const currentItems = news.slice(itemOffset, endOffset);
@@ -75,74 +57,51 @@ function NewsArticles({ news }) {
 
   function togleMenu(id) {
     elementVisibility.togled
-      ? setElementVisibility((prev) => ({ ...prev, id: id, togled: false }))
-      : setElementVisibility((prev) => ({ ...prev, id: id, togled: true }));
+      ? setElementVisibility(() => ({id: id, togled: false }))
+      : setElementVisibility(() => ({id: id, togled: true }));
   }
 
   return (
     <section className="flex flex-col w-full">
       <div className="flex items-center">
         <Paginate
-          breakLabel="..."
           nextLabel="вперёд"
           onPageChange={handlePageClick}
-          pageRangeDisplayed={1}
           pageCount={pageCount}
           previousLabel={"назад"}
-          forcePage={currentPage}
           renderOnZeroPageCount={null}
         />
         <select
           className="h-10"
-          onChange={(item) => {
-            setCurrentPage(0);
-            setItemsPerPage(item.target.value);
-          }}
-        >
+          onChange={(item) => {setItemsPerPage(item.target.value)}}>
           <option>2</option>
-          <option>3</option>
           <option>5</option>
           <option>10</option>
         </select>
       </div>
       {currentItems.length ? (
-        currentItems.map((item) => (
+        currentItems.map((article) => (
           <article
             className="p-3 mt-4 transition-shadow shadow-md shadow-blue-500 max-h-40 hover:shadow-blue-800"
-            key={item.id}
+            key={article.id}
           >
             <div className="flex items-center justify-between border-b-2 border-solid border-slate-500">
               <h3 className="text-lg break-words text-ellipsis line-clamp-2">
-                {item.title}
+                {article.title}
               </h3>
               <div className="relative">
                 <button
                   onClick={() => {
-                    togleMenu(item.id);
+                    togleMenu(article.id);
                   }}
                 >
                   ...
                 </button>
-                <ul
-                  className={
-                    item.id === elementVisibility.id &&
-                    elementVisibility.togled === true
-                      ? elementVisibility.visibleStyle
-                      : elementVisibility.invisibleStyle
-                  }
-                >
-                  <li className="cursor-pointer">Редактировать</li>
-                  <li
-                    className="text-red-500 cursor-pointer"
-                    onClick={() => mutate(item.id)}
-                  >
-                    Удалить
-                  </li>
-                </ul>
+                {elementVisibility.togled && elementVisibility.id === article.id ? <ArticleOptionsMenu id={article.id} /> : null}
               </div>
             </div>
             <p className="mt-2 break-words text-ellipsis line-clamp-4">
-              {item.text}
+              {article.text}
             </p>
           </article>
         ))

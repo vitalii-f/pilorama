@@ -5,6 +5,8 @@ import ArticlesPage from "../../../pages/Articles/ArticlesPage";
 import CreateNews from "../../../pages/AdminPanel/CreateNews/CreateNews";
 import UsersControl from "../../../pages/AdminPanel/UsersControl/UsersControl";
 import Header from "../header/Header";
+import AuthPage from "../../../pages/AuthPage/AuthPage";
+import Profile from "../../../pages/UserProfile/Profile";
 
 function Router() {
   return (
@@ -21,7 +23,11 @@ function Router() {
           </Route>
           
     
-          <Route element={<ArticlesPage />} path="/articles"/>
+          <Route path="/articles" element={<ArticlesPage />}/>
+
+          <Route path="/auth" element={<AuthPage />}/>
+
+          <Route path="/profile" element={<Profile />}/>
     
           <Route element={<div>Not Found</div>} path="*"/>
           
