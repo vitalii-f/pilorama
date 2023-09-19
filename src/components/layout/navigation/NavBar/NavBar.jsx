@@ -1,19 +1,17 @@
 import { Link, NavLink } from 'react-router-dom';
 import logo from '/public/logo.svg'
-// import { useContext } from 'react';
-// import { AuthContext } from '../../../../providers/AuthProvider';
-// import LoginButton from '../../ui/auth/LogInButton';
-// import LogoutButton from '../../ui/auth/LogOutButton';
-// import { useAuth0 } from '@auth0/auth0-react';
-
-const isModer = true;
-
+import SignOutButton from '../../ui/auth/SignOutButton';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 function NavBar() {
-    // const {user, setUser} = useContext(AuthContext)
+    const [admin, setAdmin] = useState(false)
+    
+    const user = useSelector((state) => state.user.value)
 
-    // const { isAuthenticated } = useAuth0();
-
+    useEffect(() => {
+        user?.role.then(data => setAdmin(data.includes('admin')))
+    }, [user])
     
     return (
         <>
@@ -23,22 +21,12 @@ function NavBar() {
                     <li><NavLink to='/'>Главна</NavLink></li>
                     <li><NavLink to='/articles'>Статьи</NavLink></li>
                     <li><NavLink to='/about'>О нас</NavLink></li>
-                    
-                    {/* {isAuthenticated
-                    ? <>
-                        <li><NavLink to='/profile'> Профиль </NavLink> </li>
-                        <li><LogoutButton /></li>
-                      </>
-                    : <LoginButton />} */}
-
-                    
-
-                    {/* {user
-                        ? <li><NavLink to='/account'>Личный кабинет</NavLink> </li>
+                    {user
+                        ? <li><NavLink to='/profile'>Личный кабинет</NavLink> </li>
                         : <li><NavLink to='/auth'>Авторизация</NavLink> </li>
-                    } */}
-                    
-                    {isModer ? <li><NavLink to='/admin'>Создать новость</NavLink></li> : false}
+                    }
+                    {user && admin && <li><NavLink to='/admin'>Создать новость</NavLink></li>}
+                    {user && <SignOutButton />}
                 </ul>
             </nav>
         </>

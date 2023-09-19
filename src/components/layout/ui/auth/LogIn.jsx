@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { AuthService } from "../../../../services/auth.service";
+import { FirebaseAuthService } from "src/services/firebaseAuth.service";
+import { useDispatch } from "react-redux";
+import { setUser } from "src/store/user/userSlice";
 
 const Input = styled.input`
   width: 400px;
@@ -9,29 +10,38 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 
-function SignIn() {
-  const { isLoading, isSuccess, data, isError } = useQuery(['signIn user'], () => AuthService.checkPassword('vit.vit.00.000@gmail.com', null))
-  isLoading && console.log("Loading " + isLoading)
-  isSuccess && console.log(data)
-  isError && console.log('Error ' + isError)
+function LogIn() {
+  const dispatch = useDispatch()
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ mode: "onChange" });
 
-  const authUser = async () => {
-    
+  const authUser = async (data) => {
+    FirebaseAuthService.authUser(data.email, data.password)
+    dispatch(setUser())
   }
-
 
   return (
     <form
       className="flex flex-col p-2 mx-auto mt-5 gap-y-3"
-      onSubmit={handleSubmit(authUser())}
+      onSubmit={handleSubmit(authUser)}
     >
       <label className="text-2xl text-center">Вход в учётную запись</label>
-      
+
+      <Input
+        {...register("email", {
+          minLength: { value: 5, message: "Минимум 5 символов" },
+          maxLength: { value: 30, message: "Максимум 30 символов" },
+        })}
+        type="email"
+        placeholder="Введите e-mail"
+        required
+      />
+      {errors.email && <p className="font-bold text-red-500"> {errors.email.message} </p>}
+
       <Input
         {...register("password", {
           required: true,
@@ -44,20 +54,9 @@ function SignIn() {
       />
       {errors.password && <p className="font-bold text-red-500"> {errors.password.message} </p>}
       
-      <Input
-        {...register("email", {
-          minLength: { value: 5, message: "Минимум 5 символов" },
-          maxLength: { value: 30, message: "Максимум 30 символов" },
-        })}
-        type="email"
-        placeholder="Введите e-mail"
-        required
-      />
-      {errors.email && <p className="font-bold text-red-500"> {errors.email.message} </p>}
-      
       <button>Войти в систему</button>
     </form>
   );
 }
 
-export default SignIn;
+export default LogIn;

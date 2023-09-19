@@ -1,8 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { AuthService } from "../../../../services/auth.service";
+import { useDispatch } from "react-redux";
+import { FirebaseAuthService } from "src/services/firebaseAuth.service";
+import { FirestoreService } from "src/services/firestore.service";
+import { setUser } from "src/store/user/userSlice";
 import styled from "styled-components";
-import { useState } from "react";
 
 const Input = styled.input`
   width: 400px;
@@ -11,17 +12,8 @@ const Input = styled.input`
 `
 
 function SignUp() {
-  const [alertMessage, setAlertMessage] = useState()
-  const { mutate } = useMutation(["register user"], (data) =>
-    AuthService.registerUser(data.login, data.password, data.email),
-    {
-      onSuccess: (response) => {
-        console.log(response)
-        response.type === 'error' ? setAlertMessage(response.message) : setAlertMessage('Аккаунт успешно зарегестрирован!')
-      }
-    }
-  );
-
+  const dispatch = useDispatch()
+  
   const {
     register,
     handleSubmit,
@@ -31,7 +23,9 @@ function SignUp() {
   });
 
   const registerUser = async (data) => {
-    mutate(data);
+    const currentUser = await FirebaseAuthService.createUser(data.email, data.password, data.login)
+    await FirestoreService.addRole(currentUser.uid, ['default'], data.email, data.login)
+    dispatch(setUser())
   };
 
   return (
@@ -53,6 +47,18 @@ function SignUp() {
         required
       />
       {errors.login && <p className="font-bold text-red-500"> {errors.login.message} </p>}
+      
+      <Input
+        {...register("email", {
+          minLength: { value: 5, message: "Минимум 5 символов" },
+          maxLength: { value: 30, message: "Максимум 30 символов" },
+        })}
+        type="email"
+        placeholder="Введите e-mail"
+        required
+      />
+      {errors.email && <p className="font-bold text-red-500"> {errors.email.message} </p>}
+
       <Input
         {...register("password", {
           required: true,
@@ -64,18 +70,9 @@ function SignUp() {
         required
       />
       {errors.password && <p className="font-bold text-red-500"> {errors.password.message} </p>}
-      <Input
-        {...register("email", {
-          minLength: { value: 5, message: "Минимум 5 символов" },
-          maxLength: { value: 30, message: "Максимум 30 символов" },
-        })}
-        type="email"
-        placeholder="Введите e-mail"
-        required
-      />
-      {errors.email && <p className="font-bold text-red-500"> {errors.email.message} </p>}
+      
       <button>Зарегестрироваться</button>
-      {alertMessage && <p> {alertMessage} </p>}
+      {/* {alertMessage && <p> {alertMessage} </p>} */}
     </form>
   );
 }

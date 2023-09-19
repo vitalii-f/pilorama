@@ -1,17 +1,19 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useDispatch, useSelector } from "react-redux";
+import { setRole } from "src/store/user/roleSlice";
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const user = useSelector((state) => state.user.value)
+  const role = useSelector((state) => state.role.value)
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
+  const dispatch = useDispatch()
 
+  dispatch(setRole('Moder'))
+  // console.log(role)
   return (
-    isAuthenticated && (
+    user && (
       <div>
-        <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
+        {/* <img src={user.picture} alt={user.displayName} /> */}
+        <h2>{user.displayName}</h2>
         <p>{user.email}</p>
       </div>
     )

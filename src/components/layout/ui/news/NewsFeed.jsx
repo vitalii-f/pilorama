@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
-
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import styled from "styled-components";
 import ArticleOptionsMenu from "./ArticleOptionsMenu";
+import { CircularProgress } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const Paginate = styled(ReactPaginate).attrs({
   activeClassName: "active",
@@ -44,7 +45,7 @@ function NewsArticles({ news }) {
   });
 
   if (!Array.isArray(news))
-    return <h2 className="text-2xl text-red-400">Error: Incorrect data! Try reload page.</h2>;
+    return <div className="flex flex-col items-center content-center w-full gap-y-5"> <h2 className="text-2xl text-yellow-400 ">Loading... </h2> <CircularProgress /> </div>;
 
   const endOffset = +itemOffset + +itemsPerPage;
   const currentItems = news.slice(itemOffset, endOffset);
@@ -79,6 +80,7 @@ function NewsArticles({ news }) {
           <option>10</option>
         </select>
       </div>
+      {console.log(news)}
       {currentItems.length ? (
         currentItems.map((article) => (
           <article
@@ -89,6 +91,7 @@ function NewsArticles({ news }) {
               <h3 className="text-lg break-words text-ellipsis line-clamp-2">
                 {article.title}
               </h3>
+              <p className="text-xs">Автор: {article.author}</p>
               <div className="relative">
                 <button
                   onClick={() => {
@@ -103,6 +106,13 @@ function NewsArticles({ news }) {
             <p className="mt-2 break-words text-ellipsis line-clamp-4">
               {article.text}
             </p>
+            <div className="flex justify-between">
+              <span className="mt-2 text-xs">
+                {article.creation_date.toDate().toLocaleDateString()}
+              </span>
+              <span className="mt-2 text-xs">{article.category}</span>
+            </div>
+
           </article>
         ))
       ) : (

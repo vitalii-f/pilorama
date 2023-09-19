@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { NewsService } from "../../../../services/news.service";
+import { FirestoreService } from "src/services/firestore.service";
 
 function ArticleOptionsMenu({ id }) {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(
     ["remove article"],
-    (data) => NewsService.removeArticle(data),
+    (data) => FirestoreService.deleteArticle(data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("remove article");
