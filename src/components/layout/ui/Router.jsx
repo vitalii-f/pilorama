@@ -17,8 +17,8 @@ function Router() {
 
   onAuthStateChanged(auth, (user) => {
     user && dispatch(setUser())
-  });
-  
+  })
+
   return (
     <BrowserRouter>
       <Header />

@@ -8,13 +8,20 @@ export const FirebaseAuthService = {
         return userCredential.user
     },
     async authUser(email, password) {
-        const response = await signInWithEmailAndPassword(auth, email, password)
-        return response.user
+        try {
+            const response = await signInWithEmailAndPassword(auth, email, password)
+            return response.user
+        } catch (e) {
+            console.log(e)
+        }
     },
     async signOutUser() {
         return await signOut(auth)
     },
     userState() {
         return auth.currentUser
+    },
+    async updateUserProfile(data) {
+        return await updateProfile(auth.currentUser, data)
     }
 };

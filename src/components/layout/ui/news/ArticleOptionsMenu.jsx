@@ -1,12 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 import { FirestoreService } from "src/services/firestore.service";
 
 function ArticleOptionsMenu({ id }) {
   const queryClient = useQueryClient();
-
+  const user = useSelector((state => state.user.value))
+  
   const { mutate } = useMutation(
     ["remove article"],
-    (data) => FirestoreService.deleteArticle(data),
+    (data) => {
+      if (user?.userRoles.includes('admin')) FirestoreService.deleteArticle(data)
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries("remove article");

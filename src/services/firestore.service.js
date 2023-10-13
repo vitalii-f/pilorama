@@ -4,17 +4,17 @@ import { FirebaseAuthService } from "./firebaseAuth.service";
 
 export const FirestoreService = {
     async addArticle(article) {
+        console.log(article)
         const data = {
             title: article.title,
             text: article.text,
-            creationDate: new Date(),
+            creation_date: new Date(),
             author: FirebaseAuthService.userState().displayName,
             category: article.category,
-            imgURL: article.imgURL,
+            imgURL: article.imageFile,
         }
         try {
-            console.log(data)
-            await setDoc(doc(db, "news_articles", data.title), data);
+            await setDoc(doc(db, "news_articles", data.title + '-' + Date.now()), data);
           } catch (e) {
             console.error("Error adding document: ", e);
           }
@@ -61,6 +61,19 @@ export const FirestoreService = {
             await updateDoc(doc(db, 'users', userID), {
                 role: role
             })
+        } catch (e) {
+            console.error(e)
+        }
+    },
+    async getUsers() {
+        let responce = []
+        try {
+            const querySnapshot = await getDocs(query(collection(db, 'users'), orderBy('creationDate')))
+            querySnapshot.forEach((doc) => {
+                const data = doc.data()
+                responce.unshift(data)
+            })
+            return responce
         } catch (e) {
             console.error(e)
         }

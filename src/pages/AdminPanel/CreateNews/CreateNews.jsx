@@ -4,18 +4,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FirestoreService } from "src/services/firestore.service";
 import { Alert } from "@mui/material";
 import { useState } from "react";
+import { StorageService } from "src/services/storage.service";
+
+
+//TODO Правильно выставить reset()
 
 function CreateNews() {
   const [alert, setAlert] = useState({
     type: 'none',
     message: null
   })
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     mode: "onChange",
   });
 
@@ -23,11 +22,15 @@ function CreateNews() {
 
   const { mutate } = useMutation(
     ["add article"],
-    (data) => FirestoreService.addArticle(data),
+    async (data) => {
+      await StorageService.uploadNewsPreview(data.imageFile[0], 'news_preview_' + data.title)
+      data.imageFile = await StorageService.downloadNewsPreview('news_preview_' + data.title)
+      await FirestoreService.addArticle(data)
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries("add articles");
-        reset();
+        // reset();
         setAlert({type: 'success'})
       },
       onError: (error) => {
@@ -49,7 +52,6 @@ function CreateNews() {
   function showAlert(type, message) {
     if (type === 'success') return <Alert onClose={() => setAlert({type: 'none', message: null})} severity="success">Пост успешно опубликован!</Alert>
     if (type === 'error') return <Alert onClose={() => setAlert({type: 'none', message: null})} severity="error"> {message.toString()} </Alert>
-    if (type === 'none') return null
   }
 
   return (
@@ -71,7 +73,7 @@ function CreateNews() {
           placeholder="Текст"
         />
 
-        <div className="flex overflow-scroll overflow-y-hidden snap-x gap-x-3">
+        <div className="flex overflow-scroll overflow-y-hidden snap-x gap-x-3 scrollbar-container">
           <label className="flex gap-x-2">
             <input type="checkbox" value={'Важное'} {...register('category')} />
             Важное
@@ -93,7 +95,7 @@ function CreateNews() {
             Путишествия
           </label>
         </div>
-        <input type="url" {...register('imgURL')} />
+        <input type="file" {...register('imageFile')} required/>
         <button> Создать пост </button>
       </form>
       <NewsArticles news={data} />

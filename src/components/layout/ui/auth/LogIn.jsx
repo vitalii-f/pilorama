@@ -19,7 +19,7 @@ function LogIn() {
     formState: { errors },
   } = useForm({ mode: "onChange" });
 
-  const authUser = async (data) => {
+  const authUser = (data) => {
     FirebaseAuthService.authUser(data.email, data.password)
     dispatch(setUser())
   }

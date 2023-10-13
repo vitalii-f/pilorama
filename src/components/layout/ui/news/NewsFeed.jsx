@@ -1,34 +1,23 @@
-/* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import styled from "styled-components";
 import ArticleOptionsMenu from "./ArticleOptionsMenu";
 import { CircularProgress } from "@mui/material";
+import PropTypes from 'prop-types';
 import { useSelector } from "react-redux";
+
+let coefficient = 1
+window.innerWidth < 700
+? coefficient = 2
+: coefficient = 1
 
 const Paginate = styled(ReactPaginate).attrs({
   activeClassName: "active",
 })`
-  display: flex;
-  margin: 35px auto;
-  column-gap: 10px;
-
-  li {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-  }
-
   li a {
     display: block;
-    padding: 0.6em 1.2em;
+    padding: ${0.6/coefficient}em ${1.2/coefficient}em;
   }
-
   li:hover,
   .active {
     border-color: #646cff;
@@ -43,6 +32,13 @@ function NewsArticles({ news }) {
     id: null,
     togled: false,
   });
+
+  const user = useSelector((state) => state.user.value)
+
+  const [haveAccess, setHaveAccess] = useState(false)
+  useEffect(() =>{
+    setHaveAccess(user?.userRoles.includes('admin'))
+  }, [user])
 
   if (!Array.isArray(news))
     return <div className="flex flex-col items-center content-center w-full gap-y-5"> <h2 className="text-2xl text-yellow-400 ">Loading... </h2> <CircularProgress /> </div>;
@@ -66,11 +62,14 @@ function NewsArticles({ news }) {
     <section className="flex flex-col w-full">
       <div className="flex items-center">
         <Paginate
-          nextLabel="вперёд"
+          nextLabel="›"
           onPageChange={handlePageClick}
           pageCount={pageCount}
-          previousLabel={"назад"}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={1}
+          previousLabel={"‹"}
           renderOnZeroPageCount={null}
+          className="pagination"
         />
         <select
           className="h-10"
@@ -80,39 +79,36 @@ function NewsArticles({ news }) {
           <option>10</option>
         </select>
       </div>
-      {console.log(news)}
       {currentItems.length ? (
         currentItems.map((article) => (
           <article
-            className="p-3 mt-4 transition-shadow shadow-md shadow-blue-500 max-h-40 hover:shadow-blue-800"
+            className="flex p-3 mt-4 transition-shadow shadow-md shadow-blue-500 max-h-44 hover:shadow-blue-800"
             key={article.id}
           >
-            <div className="flex items-center justify-between border-b-2 border-solid border-slate-500">
-              <h3 className="text-lg break-words text-ellipsis line-clamp-2">
-                {article.title}
-              </h3>
-              <p className="text-xs">Автор: {article.author}</p>
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    togleMenu(article.id);
-                  }}
-                >
-                  ...
-                </button>
-                {elementVisibility.togled && elementVisibility.id === article.id ? <ArticleOptionsMenu id={article.id} /> : null}
+            <div className="w-60"> <img className="w-full" src={article.imgURL} /> </div>
+            <div className="w-full">
+              <div className="flex items-center justify-between pb-2 border-b-2 border-solid border-slate-500">
+                <div>
+                <h3 className="text-lg break-words text-ellipsis line-clamp-2">
+                  {article.title}
+                </h3>
+                <p className="text-xs">Автор: {article.author}</p>
+                </div>
+                <div className="relative">
+                  {haveAccess ? <button onClick={() => togleMenu(article.id)}>...</button> : null}
+                  {elementVisibility.togled && elementVisibility.id === article.id ? <ArticleOptionsMenu id={article.id} /> : null}
+                </div>
+              </div>
+              <p className="mt-2 break-words text-ellipsis line-clamp-2">
+                {article.text}
+              </p>
+              <div className="flex justify-between">
+                <span className="mt-2 text-xs">
+                  {article.creation_date.toDate().toLocaleDateString()}
+                </span>
+                <span className="mt-2 text-xs">{article.category}</span>
               </div>
             </div>
-            <p className="mt-2 break-words text-ellipsis line-clamp-4">
-              {article.text}
-            </p>
-            <div className="flex justify-between">
-              <span className="mt-2 text-xs">
-                {article.creation_date.toDate().toLocaleDateString()}
-              </span>
-              <span className="mt-2 text-xs">{article.category}</span>
-            </div>
-
           </article>
         ))
       ) : (
@@ -120,6 +116,10 @@ function NewsArticles({ news }) {
       )}
     </section>
   );
+}
+
+NewsArticles.propTypes = {
+  news: PropTypes.array.isRequired
 }
 
 export default NewsArticles;
