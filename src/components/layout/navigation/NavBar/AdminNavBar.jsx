@@ -4,7 +4,6 @@ import styled from "styled-components"
 const StyledNavLink = styled(NavLink)`
   
 `
-
 function AdminNavBar() {
   return (
     <nav className='flex-shrink-0 w-60'>

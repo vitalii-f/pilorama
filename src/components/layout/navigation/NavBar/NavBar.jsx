@@ -1,6 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
 import logo from '/public/logo.svg'
-import SignOutButton from '../../ui/auth/SignOutButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { Drawer, IconButton, ThemeProvider, Toolbar } from '@mui/material';
@@ -8,6 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { theme } from 'src/utils/constants/theme';
 import { useQuery } from '@tanstack/react-query';
 import { setUser } from 'src/store/user/userSlice';
+import SignOutButton from '../../ui/auth/SignOutButton';
 
 const drawerWidth = 240;
 
@@ -18,7 +18,6 @@ function NavBar() {
 
     const dispatch = useDispatch()
 
-    
     const { isSuccess } = useQuery(['getUser'], () => dispatch(setUser()))
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen)
@@ -33,7 +32,7 @@ function NavBar() {
             <li className='w-full'><NavLink to='/about'>О нас</NavLink></li>
             {user
                 ? <li className='w-full'><NavLink to='/profile'>Личный кабинет</NavLink> </li>
-                : <li className='w-full'><NavLink to='/auth'>Авторизация</NavLink> </li>
+                : <li className='w-full'><NavLink to='/login'>Авторизация</NavLink> </li>
             }
             {user && user?.userRoles.includes('admin') && <li className='w-full'><NavLink to='/admin'>Создать новость</NavLink></li>}
             {user && <li className='w-full'> <SignOutButton /> </li>}
@@ -76,7 +75,7 @@ function NavBar() {
                     <li><NavLink to='/about'>О нас</NavLink></li>
                     {user
                         ? <li><NavLink to='/profile'>Личный кабинет</NavLink> </li>
-                        : <li><NavLink to='/auth'>Авторизация</NavLink> </li>
+                        : <li><NavLink to='/login'>Авторизация</NavLink> </li>
                     }
                     {user && user?.userRoles.includes('admin') && <li><NavLink to='/admin'>Создать новость</NavLink></li>}
                     {user && <SignOutButton />}

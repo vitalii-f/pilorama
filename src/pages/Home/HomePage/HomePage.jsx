@@ -1,8 +1,8 @@
 function HomePage() {
-    return (
-        <>
-            <h2> HOME PAGE </h2>
-        </>
-    )
+  return (
+    <div className='relative'>
+      <h2> HOME PAGE </h2>
+    </div>
+  )
 }
 export default HomePage

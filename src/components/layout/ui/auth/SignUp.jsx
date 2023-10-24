@@ -5,8 +5,15 @@ import { FirestoreService } from "src/services/firestore.service";
 import { setUser } from "src/store/user/userSlice";
 import styled from "styled-components";
 
-const Input = styled.input`
-  width: 400px;
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin-top: 50px;
+`
+
+const StyledInput = styled.input`
   padding: 15px;
   border-radius: 5px;
 `
@@ -29,13 +36,12 @@ function SignUp() {
   };
 
   return (
-    <form
-      className="flex flex-col p-2 mx-auto mt-5 gap-y-3"
+    <StyledForm
       onSubmit={handleSubmit(registerUser)}
     >
       <label className="text-2xl text-center">Реистрация</label>
       
-      <Input
+      <StyledInput
         {...register("login", {
           required: true,
           minLength: { value: 3, message: "Минимум 3 символа" },
@@ -48,7 +54,7 @@ function SignUp() {
       />
       {errors.login && <p className="font-bold text-red-500"> {errors.login.message} </p>}
       
-      <Input
+      <StyledInput
         {...register("email", {
           minLength: { value: 5, message: "Минимум 5 символов" },
           maxLength: { value: 30, message: "Максимум 30 символов" },
@@ -59,7 +65,7 @@ function SignUp() {
       />
       {errors.email && <p className="font-bold text-red-500"> {errors.email.message} </p>}
 
-      <Input
+      <StyledInput
         {...register("password", {
           required: true,
           minLength: { value: 6, message: "Минимум 6 символов" },
@@ -73,7 +79,7 @@ function SignUp() {
       
       <button>Зарегестрироваться</button>
       {/* {alertMessage && <p> {alertMessage} </p>} */}
-    </form>
+    </StyledForm>
   );
 }
 

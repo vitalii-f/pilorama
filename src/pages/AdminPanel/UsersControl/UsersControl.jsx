@@ -16,7 +16,6 @@ function UsersControl() {
   const { data, isLoading, error } = useQuery(['get Users'], () =>
     FirestoreService.getUsers()
   )
-  // console.log(data)
   if (isLoading) return <h2> Loading... </h2>
   if (error) return <h2> Error </h2>
 

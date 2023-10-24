@@ -10,7 +10,6 @@ function AdminPanel() {
   useEffect(() =>{
     setHaveAccess(user?.userRoles.includes('admin'))
   }, [user])
-
   
   if (!haveAccess) return <ErrorPage errorCode={'403 - отказано в доступе'} />
   return (

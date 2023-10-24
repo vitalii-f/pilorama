@@ -1,125 +1,63 @@
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import styled from "styled-components";
-import ArticleOptionsMenu from "./ArticleOptionsMenu";
-import { CircularProgress } from "@mui/material";
-import PropTypes from 'prop-types';
-import { useSelector } from "react-redux";
+import { useEffect, useState } from 'react'
+import { CircularProgress } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { useQuery } from '@tanstack/react-query'
+import { FirestoreService } from 'src/services/firestore.service'
+import NewsArticle from './NewsArticle'
+import NewsPagination from './NewsPagination'
 
-let coefficient = 1
-window.innerWidth < 700
-? coefficient = 2
-: coefficient = 1
-
-const Paginate = styled(ReactPaginate).attrs({
-  activeClassName: "active",
-})`
-  li a {
-    display: block;
-    padding: ${0.6/coefficient}em ${1.2/coefficient}em;
-  }
-  li:hover,
-  .active {
-    border-color: #646cff;
-  }
-`;
-
-function NewsArticles({ news }) {
-  const [itemOffset, setItemOffset] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(2);
-
-  const [elementVisibility, setElementVisibility] = useState({
-    id: null,
-    togled: false,
-  });
-
+function NewsFeed() {
   const user = useSelector((state) => state.user.value)
 
   const [haveAccess, setHaveAccess] = useState(false)
-  useEffect(() =>{
+  useEffect(() => {
     setHaveAccess(user?.userRoles.includes('admin'))
   }, [user])
 
-  if (!Array.isArray(news))
-    return <div className="flex flex-col items-center content-center w-full gap-y-5"> <h2 className="text-2xl text-yellow-400 ">Loading... </h2> <CircularProgress /> </div>;
+  const [itemsPerPage, setItemsPerPage] = useState(2)
+  const [currentPage, setCurrentPage] = useState(0)
 
-  const endOffset = +itemOffset + +itemsPerPage;
-  const currentItems = news.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(news.length / itemsPerPage);
+  const { data, isLoading, isError } = useQuery(
+    ['articles', currentPage, itemsPerPage],
+    () => FirestoreService.getArticles(itemsPerPage, currentPage * itemsPerPage)
+  )
+  if (isError) return <h2> Error... </h2>
+  if (isLoading) return <h2> Loading.. </h2>
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % news.length;
-    setItemOffset(newOffset);
-  };
+  if (!Array.isArray(data.news))
+    return (
+      <div className='flex flex-col items-center content-center w-full gap-y-5'>
+        {' '}
+        <h2 className='text-2xl text-yellow-400 '>Loading... </h2>{' '}
+        <CircularProgress />{' '}
+      </div>
+    )
 
-  function togleMenu(id) {
-    elementVisibility.togled
-      ? setElementVisibility(() => ({id: id, togled: false }))
-      : setElementVisibility(() => ({id: id, togled: true }));
-  }
+  const currentItems = data.news
+  const pageCount = Math.ceil(data.newsCount / itemsPerPage)
 
   return (
-    <section className="flex flex-col w-full">
-      <div className="flex items-center">
-        <Paginate
-          nextLabel="›"
-          onPageChange={handlePageClick}
-          pageCount={pageCount}
-          pageRangeDisplayed={2}
-          marginPagesDisplayed={1}
-          previousLabel={"‹"}
-          renderOnZeroPageCount={null}
-          className="pagination"
-        />
-        <select
-          className="h-10"
-          onChange={(item) => {setItemsPerPage(item.target.value)}}>
-          <option>2</option>
-          <option>5</option>
-          <option>10</option>
-        </select>
-      </div>
+    <section className='flex flex-col w-full'>
+      <NewsPagination
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageCount={pageCount}
+      />
       {currentItems.length ? (
         currentItems.map((article) => (
-          <article
-            className="flex p-3 mt-4 transition-shadow shadow-md shadow-blue-500 max-h-44 hover:shadow-blue-800"
+          <NewsArticle
+            article={article}
             key={article.id}
-          >
-            <div className="w-60"> <img className="w-full" src={article.imgURL} /> </div>
-            <div className="w-full">
-              <div className="flex items-center justify-between pb-2 border-b-2 border-solid border-slate-500">
-                <div>
-                <h3 className="text-lg break-words text-ellipsis line-clamp-2">
-                  {article.title}
-                </h3>
-                <p className="text-xs">Автор: {article.author}</p>
-                </div>
-                <div className="relative">
-                  {haveAccess ? <button onClick={() => togleMenu(article.id)}>...</button> : null}
-                  {elementVisibility.togled && elementVisibility.id === article.id ? <ArticleOptionsMenu id={article.id} /> : null}
-                </div>
-              </div>
-              <p className="mt-2 break-words text-ellipsis line-clamp-2">
-                {article.text}
-              </p>
-              <div className="flex justify-between">
-                <span className="mt-2 text-xs">
-                  {article.creation_date.toDate().toLocaleDateString()}
-                </span>
-                <span className="mt-2 text-xs">{article.category}</span>
-              </div>
-            </div>
-          </article>
+            haveAccess={haveAccess}
+          />
         ))
       ) : (
         <h2> No Articles</h2>
       )}
     </section>
-  );
+  )
 }
 
-NewsArticles.propTypes = {
-  news: PropTypes.array.isRequired
-}
-
-export default NewsArticles;
+export default NewsFeed

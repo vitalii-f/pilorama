@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { auth } from "src/utils/constants/firebase.constants";
 
 export const FirebaseAuthService = {
@@ -23,5 +23,8 @@ export const FirebaseAuthService = {
     },
     async updateUserProfile(data) {
         return await updateProfile(auth.currentUser, data)
-    }
+    },
+    async verefyEmail() {
+        return await sendEmailVerification(auth.currentUser)
+    },
 };

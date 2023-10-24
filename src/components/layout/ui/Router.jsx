@@ -11,6 +11,9 @@ import { useDispatch } from "react-redux";
 import { setUser } from "src/store/user/userSlice";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "src/utils/constants/firebase.constants";
+import NewsArticleDetail from "./news/NewsArticleDetail";
+import LoginPage from "src/pages/AuthPage/LoginPage";
+import SignUpPage from "src/pages/AuthPage/SignUpPage";
 
 function Router() {
   const dispatch = useDispatch()
@@ -31,8 +34,11 @@ function Router() {
           </Route>
     
           <Route path="/articles" element={<ArticlesPage />}/>
+          <Route path="/articles/:id" element={<NewsArticleDetail />} />
 
-          <Route path="/auth" element={<AuthPage />}/>
+          <Route path="/login" element={<LoginPage />}/>
+          <Route path="/signup" element={<SignUpPage />}/>
+
 
           <Route path="/profile" element={<Profile />}/>
     

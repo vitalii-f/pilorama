@@ -6,12 +6,14 @@ function SignOutButton() {
   const dispatch = useDispatch()
   return (
     <>
-        <button onClick={() => {
+      <button
+        onClick={() => {
           FirebaseAuthService.signOutUser()
-          dispatch(signOutUser())}
-          }>
-          Выйти
-          </button>
+          dispatch(signOutUser())
+        }}
+      >
+        Выйти
+      </button>
     </>
   )
 }

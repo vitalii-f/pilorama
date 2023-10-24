@@ -1,5 +1,4 @@
 import { Alert, AlertTitle } from '@mui/material'
-import { PropTypes } from 'prop-types';
 
 function ErrorPage({errorCode = null}) {
   return (
@@ -10,10 +9,6 @@ function ErrorPage({errorCode = null}) {
         </Alert>
     </>
   )
-}
-
-ErrorPage.propTypes = {
-    errorCode: PropTypes.string
 }
 
 export default ErrorPage

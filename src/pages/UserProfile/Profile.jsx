@@ -1,69 +1,58 @@
 import { Alert } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import UserDataChange from "src/components/layout/ui/profile/UserDataChange";
 import { FirebaseAuthService } from "src/services/firebaseAuth.service";
-import { StorageService } from "src/services/storage.service";
 
-//TODO Вынести изменения профиля в отдельный компонент (изменить пароль/почту/никнейм)
+//TODO Вынести изменения профиля в отдельный компонент (изменить пароль/почту/никнейм) ✔️
 //TODO Перенести алёрт вниз страницы (или сделать абсолютным позиционированием по центру)
 //TODO Оформить/стилизовать страницу профиля
 
 const Profile = () => {
   const user = useSelector((state) => state.user.value?.userData)
+  
+  const [modal, setModal] = useState(false)
+  const changeModal = () => {
+    if (modal) {
+      setModal(false)
+    } else setModal(true)
+  }
 
   const [alert, setAlert] = useState({
     type: 'none',
     message: null
   })
 
-  const { handleSubmit, register } = useForm()
-
-
-  const {mutate} = useMutation(
-    ['update profile'],
-    async (data) => {
-      await StorageService.uploadProfilePhoto(data.photo[0], 'profile_photo_' + user.email)
-
-      const photoURL = await StorageService.downloadProfilePhoto('profile_photo_' + user.email)
-
-      await FirebaseAuthService.updateUserProfile({photoURL: photoURL})
-    },
-    {
-      onSuccess: () => {
-        setAlert({type: 'success'})
-      },
-      onError: () => {
-        setAlert({type: 'error'})
-      }
-    }
-    )
-
-  const updateProfilePhoto = async (data) => {
-    console.log(data.photo[0])
-    mutate(data)
+  async function sendVerefyMessage() {
+    console.log(await FirebaseAuthService.verefyEmail())
   }
 
   function showAlert(type, message) {
     if (type === 'success') return <Alert onClose={() => setAlert({type: 'none', message: null})} severity="success">Профиль успешно обновлён</Alert>
     if (type === 'error') return <Alert onClose={() => setAlert({type: 'none', message: null})} severity="error"> {message.toString()} </Alert>
-    if (type === 'none') return null
   }
-
+  
+  const creationDate = new Date(user?.metadata.creationTime)
+  
   return (
     user && (
-      <div>
-        {showAlert(alert.type, alert.message)}
-        {user.photoURL && <img className="w-28" src={user.photoURL} alt={user.displayName} />}
+      <section id='profile' className="w-full mt-5">
+        <div className="flex gap-5">
+          {user.photoURL && <img className="w-48" src={user.photoURL} alt={user.displayName} />}
+          <div className="flex flex-col gap-4">
+            <p>Имя пользователя: {user.displayName}</p>
+            <p>E-mail: {user.email}</p>
+            <p>Статус подтверждения почты: {user.emailVerified ? <span className="text-green-500"> подтверждена! </span> : <span className="text-red-500"> не подтверждена! </span>}</p>
+            {user.emailVerified || <button onClick={() => sendVerefyMessage()}>Подтвердить почту</button>}
+            <p>Дата регистрации: {} {creationDate.getDate()}.{creationDate.getMonth() < 9 ? '0' + creationDate.getMonth() : creationDate.getMonth()}.{creationDate.getFullYear()}</p>
+            <button onClick={() => changeModal()}>Изменить данные профиля</button>
+          </div>
+          {modal && <UserDataChange user={user} setModal={setModal} setAlert={setAlert}/>}
+        </div>
         
-        <p>Имя пользователя: {user.displayName}</p>
-        <p>Почта: {user.email}</p>
-        <form onSubmit={handleSubmit(updateProfilePhoto)}> 
-          <input {...register('photo')} id='filex' type='file'/>
-          <button> Обновить фото профиля </button>
-        </form>
-      </div>
+        {showAlert(alert.type, alert.message)}
+
+      </section>
     )
   );
 };

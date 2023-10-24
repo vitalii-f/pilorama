@@ -1,11 +1,12 @@
-import { useForm } from "react-hook-form";
-import NewsArticles from "../../../components/layout/ui/news/NewsFeed";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FirestoreService } from "src/services/firestore.service";
 import { Alert } from "@mui/material";
 import { useState } from "react";
 import { StorageService } from "src/services/storage.service";
-
+import NewsFeed from "src/components/layout/ui/news/NewsFeed";
+import SunEditor from "suneditor-react";
+import "suneditor/dist/css/suneditor.min.css";
 
 //TODO Правильно выставить reset()
 
@@ -14,7 +15,7 @@ function CreateNews() {
     type: 'none',
     message: null
   })
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, control, formState: { errors } } = useForm({
     mode: "onChange",
   });
 
@@ -39,13 +40,8 @@ function CreateNews() {
     }
   );
 
-  const { data, isLoading, error } = useQuery(["articles"], () =>
-    FirestoreService.getArticles()
-  );
-  if (isLoading) return <h2> Loading </h2>;
-  if (error) return <h2> {error} </h2>;
-
   const addNews = async (data) => {
+    console.log(data)
     mutate(data);
   };
   
@@ -58,7 +54,7 @@ function CreateNews() {
     <>
     {showAlert(alert.type, alert.message)}
       <form
-        className="flex flex-col max-w-md mx-auto mt-5 gap-7"
+        className="flex flex-col mx-auto mt-5 gap-7"
         onSubmit={handleSubmit(addNews)}
       >
         <input
@@ -67,12 +63,6 @@ function CreateNews() {
           placeholder="Заголовок"
         />
         {errors?.title?.message && <p>Requared</p>}
-        <input
-          {...register("text", { required: "Requeared" })}
-          className="p-2"
-          placeholder="Текст"
-        />
-
         <div className="flex overflow-scroll overflow-y-hidden snap-x gap-x-3 scrollbar-container">
           <label className="flex gap-x-2">
             <input type="checkbox" value={'Важное'} {...register('category')} />
@@ -96,9 +86,37 @@ function CreateNews() {
           </label>
         </div>
         <input type="file" {...register('imageFile')} required/>
+        <Controller
+          control={control}
+          name="text"
+          render={({ field }) => (
+            <SunEditor
+              // setContents="My contents"
+              showToolbar={true}
+              onChange={(e) => field.onChange(e)}
+              setDefaultStyle="height: auto"
+              setOptions={{
+                buttonList: [
+                  [
+                    "bold",
+                    "underline",
+                    "italic",
+                    "strike",
+                    "list",
+                    "align",
+                    "fontSize",
+                    "formatBlock",
+                    "table",
+                    "image"
+                  ]
+                ]
+              }}
+            />
+          )}  
+        />
         <button> Создать пост </button>
       </form>
-      <NewsArticles news={data} />
+      <NewsFeed />
     </>
   );
 }

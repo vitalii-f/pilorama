@@ -17,10 +17,13 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-
   --color-text: color: rgba(255, 255, 255, 0.87);
   --color-bg-dark: #242424;
   --color-secondary: #646cff;
+  --color-bg-button: #1a1a1a;
+  --color-border-button: #464646;
+
+  --color-bg-alert: #333333;
 }
 
 .bg-secondary {
@@ -65,33 +68,38 @@ h1 {
   line-height: 1.1;
 }
 
-button, li a {
+h2 {
+  font-size: 2em;
+  line-height: 1.5;
+}
+
+input:not([type='file']), button, li a {
   display: block;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid var(--color-border-button);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-button);
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover, a:hover {
   border-color: var(--color-secondary);
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-
-
 
 .scrollbar-container {
   scrollbar-width: thin;
 }
 
 .MuiPaper-root {
-  background-color: var(--color-bg-dark) !important;
+  background-color: var(--color-bg-alert) !important;
   color: var(--color-text) !important;
 }
 
