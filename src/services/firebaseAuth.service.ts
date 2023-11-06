@@ -1,6 +1,6 @@
 import { auth } from '@/utils/constants/firebase.constants';
 import { User, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
-import { UpdateProfileProps } from '@/utils/interfaces/interfaces';
+import { UpdateProfileProps } from '@/utils/interfaces/user.interfaces';
 
 export const FirebaseAuthService = {
     async createUser(email: string, password: string, login: string) {

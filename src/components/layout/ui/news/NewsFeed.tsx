@@ -5,11 +5,22 @@ import { useQuery } from '@tanstack/react-query'
 import NewsArticle from './NewsArticle'
 import NewsPagination from './NewsPagination'
 import { FirestoreService } from '@/services/firestore.service'
-import { IArticle, IUserState } from '@/utils/interfaces/interfaces'
+import { IUserState } from '@/utils/interfaces/user.interfaces'
+import { IGetedArticle } from '@/utils/interfaces/article.interfaces'
+import LoadingSpinner from '../loading/LoadingSpinner'
+import styled from 'styled-components'
+
+const StyledNewsFeedSection = styled.section`
+  max-width: 1280px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+`
 
 function NewsFeed() {
   const user = useSelector((state: IUserState) => state.user.value)
-
+  
   const [haveAccess, setHaveAccess] = useState<boolean>(false)
   useEffect(() => {
     if (user && user.userRoles) setHaveAccess(user?.userRoles.includes('admin'))
@@ -25,7 +36,7 @@ function NewsFeed() {
     }
   )
   if (isError) return <h2> Error... </h2>
-  if (isLoading) return <h2> Loading.. </h2>
+  if (isLoading) return <LoadingSpinner />
 
   if (!Array.isArray(data?.news))
     return (
@@ -36,11 +47,14 @@ function NewsFeed() {
       </div>
     )
 
-  const currentItems: IArticle[] = data.news
+  const currentItems: IGetedArticle[] = data.news
   const pageCount = Math.ceil(data.newsCount / itemsPerPage)
+  
+  // redirect('/home')
+  
 
   return (
-    <section className='flex flex-col w-full'>
+    <StyledNewsFeedSection className='flex flex-col w-full'>
       <NewsPagination
         itemsPerPage={itemsPerPage}
         setItemsPerPage={setItemsPerPage}
@@ -59,7 +73,7 @@ function NewsFeed() {
       ) : (
         <h2> No Articles</h2>
       )}
-    </section>
+    </StyledNewsFeedSection>
   )
 }
 

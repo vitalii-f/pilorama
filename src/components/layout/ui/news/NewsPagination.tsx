@@ -1,11 +1,10 @@
-import React from 'react';
 import ReactPaginate from 'react-paginate';
 import styled from 'styled-components';
 
 let coefficient = 1
 window.innerWidth < 700 ? coefficient = 2 : coefficient = 1
 
-const Paginate = styled(ReactPaginate).attrs({
+const StyledPaginate = styled(ReactPaginate).attrs({
   activeClassName: "active",
 })`
   li a {
@@ -25,7 +24,7 @@ interface NewsPaginationProps {
   pageCount: number
 }
 
-const NewsPagination: React.FunctionComponent<NewsPaginationProps> = ({ itemsPerPage, setItemsPerPage, currentPage, setCurrentPage, pageCount }) => {
+const NewsPagination = ({ itemsPerPage, setItemsPerPage, currentPage, setCurrentPage, pageCount }: NewsPaginationProps) => {
 
   const handlePageClick = (page: any) => {
     setCurrentPage(page.selected)
@@ -33,7 +32,7 @@ const NewsPagination: React.FunctionComponent<NewsPaginationProps> = ({ itemsPer
   
   return (
     <div className="flex items-center">
-        <Paginate
+        <StyledPaginate
           nextLabel="›"
           onPageChange={handlePageClick}
           pageCount={pageCount}

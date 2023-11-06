@@ -4,12 +4,10 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { Drawer, IconButton, ThemeProvider, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useQuery } from '@tanstack/react-query';
-import { setUser } from '@/store/user/userSlice';
 import SignOutButton from '../../ui/auth/SignOutButton';
 import { theme } from '@/utils/constants/theme';
-import { IUserState } from '@/utils/interfaces/interfaces';
-import { useAppDispatch } from '@/store/store';
+import { IUserState } from '@/utils/interfaces/user.interfaces';
+import NavBarLoader from './NavBar.skeleton';
 
 const drawerWidth = 240;
 
@@ -18,14 +16,6 @@ function NavBar() {
 
     const user = useSelector((state: IUserState) => state.user.value)
 
-    const dispatch = useAppDispatch()
-
-    const { isSuccess } = useQuery(
-        {
-            queryKey: ['getUser'],
-            queryFn: () => dispatch(setUser()),
-        })
-        
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen)
     }
@@ -46,32 +36,33 @@ function NavBar() {
           </ul>
         </nav>
     )
-    if (isSuccess) return (
+    if (user === undefined) return <NavBarLoader />
+    return (
         <>  
             <ThemeProvider theme={theme}>
-            <IconButton
-                className='mobile-menu'
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { md: 'none' } }}
-            >
-                <MenuIcon color='secondary' />
-            </IconButton>
-            <Drawer
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                }}
-                sx={{
-                    display: { md: 'block', lg: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                }}
-            >
-                {menu}
-            </Drawer>
+                <IconButton
+                    className='mobile-menu'
+                    aria-label="open drawer"
+                    edge="start"
+                    onClick={handleDrawerToggle}
+                    sx={{ mr: 2, display: { md: 'none' } }}
+                >
+                    <MenuIcon color='secondary' />
+                </IconButton>
+                <Drawer
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                    ModalProps={{
+                        keepMounted: true, // Better open performance on mobile.
+                    }}
+                    sx={{
+                        display: { md: 'block', lg: 'none' },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                    }}
+                >
+                    {menu}
+                </Drawer>
             </ThemeProvider>
             
             <nav className='flex justify-between w-full pb-4 border-b-2 border-gray-300 border-solid header-nav'>

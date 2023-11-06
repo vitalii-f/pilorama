@@ -1,11 +1,13 @@
-import { DocumentData, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, limit, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, limit, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { FirebaseAuthService } from '@/services/firebaseAuth.service';
 import { db } from "@/utils/constants/firebase.constants";
-import { IArticle } from '@/utils/interfaces/interfaces';
+import { ICreatedArticle } from "@/utils/interfaces/article.interfaces";
+import { IGetedArticle } from './../utils/interfaces/article.interfaces';
+import { ICategory } from "@/utils/interfaces/interfaces";
 
 export const FirestoreService = {
-    async addArticle(article: IArticle) {
-        const data: IArticle = {
+    async addArticle(article: ICreatedArticle) {
+        const data: ICreatedArticle = {
             title: article.title,
             text: article.text,
             creation_date: new Date(),
@@ -38,25 +40,22 @@ export const FirestoreService = {
         const dbQuery = query(coll, orderBy('id', 'desc'), where('id', '<=', currentIndex), limit(lim))
         const querySnapshot = await getDocs(dbQuery)
 
-        const response: any[] = []
+        const response: IGetedArticle[] = []
         querySnapshot.forEach((doc) => {
-            const data: DocumentData = doc.data()
-
+            const data = doc.data() as IGetedArticle
             response.push(data)
-            console.log(data)
         });
 
         return {news: response, newsCount: dataCount}
     },
-    async getArticleById(id: number) {
+    async getArticleById(id: number): Promise<IGetedArticle> {
         const coll = collection(db, 'news_articles')
         const dbQuery = query(coll, orderBy('id'), where('id', '==', +id))
         const querySnapshot = await getDocs(dbQuery)
 
-        const response: Array<object> = []
+        const response: Array<IGetedArticle> = []
         querySnapshot.forEach((doc) => {
-            const data = doc.data()
-
+            const data = doc.data() as IGetedArticle
             response.push(data)
         });
 
@@ -108,4 +107,21 @@ export const FirestoreService = {
             console.error(e)
         }
     },
+    async getСategoriesList(): Promise<ICategory[]> {
+        const responce: Array<ICategory> = []
+
+        const querySnapshot = await getDocs(query(collection(db, 'categories')))
+        querySnapshot.forEach((doc) => {
+            const data = doc.data() as ICategory
+            responce.unshift(data)
+        })
+        return responce
+    },
+    async addCategory(name: string) {
+        console.log('adsdas')
+        const data: ICategory = {
+            name: name
+        }
+        return await setDoc(doc(db, 'categories', name), data);
+    }
 }

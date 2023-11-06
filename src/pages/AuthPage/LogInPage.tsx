@@ -1,5 +1,5 @@
 import LogIn from '@/components/layout/ui/auth/LogIn'
-import { IUserState } from '@/utils/interfaces/interfaces'
+import { IUserState } from '@/utils/interfaces/user.interfaces'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'

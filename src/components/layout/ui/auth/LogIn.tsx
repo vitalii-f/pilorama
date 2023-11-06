@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { FirebaseAuthService } from "@/services/firebaseAuth.service";
 import { setUser } from "@/store/user/userSlice";
-import { IUserLogInData } from "@/utils/interfaces/interfaces";
 import { useAppDispatch } from "@/store/store";
+import { IUserLogInData } from "@/utils/interfaces/user.interfaces";
 
 const StyledForm = styled.form`
   display: flex;

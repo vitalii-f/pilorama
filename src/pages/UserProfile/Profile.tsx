@@ -1,6 +1,8 @@
+import LoadingSpinner from "@/components/layout/ui/loading/LoadingSpinner";
 import UserDataChange from "@/components/layout/ui/profile/UserDataChange";
 import { FirebaseAuthService } from "@/services/firebaseAuth.service";
-import { AlertProps, IUserState } from "@/utils/interfaces/interfaces";
+import { AlertProps } from "@/utils/interfaces/interfaces";
+import { IUserState } from "@/utils/interfaces/user.interfaces";
 import { Alert } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -35,7 +37,7 @@ const Profile = () => {
   }
   
   const creationDate = user && user.metadata && user.metadata.creationTime && new Date(user.metadata.creationTime)
-  
+  if (!user) return <LoadingSpinner />
   return (
     user && (
       <section id='profile' className="w-full mt-5">

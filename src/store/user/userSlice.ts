@@ -1,26 +1,18 @@
 import { FirebaseAuthService } from "@/services/firebaseAuth.service";
 import { FirestoreService } from "@/services/firestore.service";
-import { TUserRoles } from "@/utils/interfaces/interfaces";
+import { TUserRoles } from "@/utils/interfaces/user.interfaces";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "firebase/auth";
 
-// let currentUser: object = {}
-// onAuthStateChanged(auth, (user) => {
-//     if (user) {
-//       currentUser = user
-//     } else {
-//       // User is signed out
-//     }
-//   });
 interface UserState {
   value: {
     userData: User | null
     userRoles: TUserRoles | null 
-  } | null
+  } | null | undefined
 }
 
 const initialState = {
-  value: null
+  value: undefined
 } as UserState
 
 export const userSlice = createSlice({
@@ -43,6 +35,7 @@ export const setUser = createAsyncThunk(
   async () => {
     const userData: User | null = FirebaseAuthService.userState()
     const userRoles: TUserRoles | null = userData && userData.email !== null ? await FirestoreService.getRole(userData.email) : null
+    // console.log({userData, userRoles})
     return {userData, userRoles}
   }
 )

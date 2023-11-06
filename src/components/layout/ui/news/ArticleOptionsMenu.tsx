@@ -1,5 +1,5 @@
 import { FirestoreService } from "@/services/firestore.service";
-import { IUserState } from "@/utils/interfaces/interfaces";
+import { IUserState } from "@/utils/interfaces/user.interfaces";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 
@@ -7,7 +7,7 @@ interface ArticleOptionsMenuProps {
   id: number
 }
 
-const ArticleOptionsMenu: React.FunctionComponent<ArticleOptionsMenuProps> = ({ id }) => {
+const ArticleOptionsMenu = ({ id }: ArticleOptionsMenuProps) => {
   const queryClient = useQueryClient();
   const user = useSelector((state: IUserState) => state.user.value)
   

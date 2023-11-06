@@ -1,30 +1,8 @@
 import { FirestoreService } from '@/services/firestore.service'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
-
-const Article = styled.article`
-  margin-top: 25px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`
-const Title = styled.h2`
-  padding: 20px 0;
-  font-size: clamp(1.3rem, 5vw, 2.5rem);
-  font-weight: 500;
-  border-bottom: 2px solid white;
-`
-const Text = styled.div`
-  font-size: clamp(1rem, 4vw, 1.5rem);
-  line-height: 1.6;
-  max-width: 1200px;
-`
-
-const Img = styled.img`
-  margin: 0 auto;
-`
+import { StyledArticle, StyledArticleFooter, StyledImg, StyledText, StyledTitle } from './NewsArticleDetail.styled'
+import LoadingSpinner from '../loading/LoadingSpinner'
 
 function NewsArticleDetail() {
   const { id } = useParams()
@@ -32,21 +10,23 @@ function NewsArticleDetail() {
   const { data, isSuccess, isLoading } = useQuery(
     {
       queryKey: ['getArticleById'],
-      queryFn: async () => await FirestoreService.getArticleById(id)
+      queryFn: async () => id ? await FirestoreService.getArticleById(+id) : null
     }
   )
-  if (isLoading) return <h1>LOADING</h1>
-  if (isSuccess)
+
+  if (isLoading) return <LoadingSpinner />
+  
+  if (isSuccess && data)
     return (
-      <Article className='flex flex-col gap-5'>
-        <Img className='' src={data.imgURL} />
-        <Title>{data.title}</Title>
-        <Text dangerouslySetInnerHTML={{ __html: data.text }}></Text>
-        <div className='flex justify-between'>
+      <StyledArticle>
+        <StyledImg src={data.imgURL} />
+        <StyledTitle>{data.title}</StyledTitle>
+        <StyledText dangerouslySetInnerHTML={{ __html: data.text }}></StyledText>
+        <StyledArticleFooter>
           <span>Автор: {data.author}</span>
           <span>{data.creation_date.toDate().toLocaleDateString()}</span>
-        </div>
-      </Article>
+        </StyledArticleFooter>
+      </StyledArticle>
     )
 }
 

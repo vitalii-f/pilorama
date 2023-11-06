@@ -1,15 +1,35 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, redirect, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import ArticleOptionsMenu from './ArticleOptionsMenu'
-import { IArticle } from '@/utils/interfaces/interfaces'
+import { IGetedArticle } from '@/utils/interfaces/article.interfaces'
+
+const StyledArticle = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`
 
 const ArticleImgContainer = styled.div`
   flex-shrink: 3;
 `
 
+const StyledImg = styled.img`
+  max-width: 220px;
+  max-height: 130px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    max-height: 200px;
+  }
+`
+
 interface NewsArticleProps {
-  article: IArticle
+  article: IGetedArticle
   haveAccess: boolean
 }
 
@@ -18,7 +38,7 @@ interface iElementVisibility {
   togled: boolean
 }
 
-const NewsArticle: React.FunctionComponent<NewsArticleProps> = ({ article, haveAccess }) => {
+const NewsArticle = ({ article, haveAccess }: NewsArticleProps) => {
   const [elementVisibility, setElementVisibility] = useState<iElementVisibility>({
     id: null,
     togled: false,
@@ -29,11 +49,11 @@ const NewsArticle: React.FunctionComponent<NewsArticleProps> = ({ article, haveA
       ? setElementVisibility(() => ({ id: id, togled: false }))
       : setElementVisibility(() => ({ id: id, togled: true }))
   }
-  
+
   return (
-    <article className='flex flex-col gap-5 mt-4 transition-shadow shadow-md sm:flex-row'>
+    <StyledArticle className='transition-shadow shadow-md sm:flex-row'>
       <ArticleImgContainer className=''>
-        <img src={article.imgURL} />
+        <StyledImg src={article.imgURL} />
       </ArticleImgContainer>
       <div className='flex flex-col justify-between w-full py-2'>
         <div className='flex items-center justify-between pb-2 border-b-2 border-solid border-slate-500'>
@@ -68,7 +88,7 @@ const NewsArticle: React.FunctionComponent<NewsArticleProps> = ({ article, haveA
           </div>
         </div>
       </div>
-    </article>
+    </StyledArticle>
   )
 }
 

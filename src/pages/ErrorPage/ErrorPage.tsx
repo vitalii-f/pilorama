@@ -4,7 +4,7 @@ interface ErrorPageProps {
   errorCode: string
 }
 
-const ErrorPage: React.FunctionComponent<ErrorPageProps> = ({ errorCode }) => {
+const ErrorPage = ({ errorCode }: ErrorPageProps) => {
   return (
     <>
         <Alert severity="error" className='mx-auto mt-10'>

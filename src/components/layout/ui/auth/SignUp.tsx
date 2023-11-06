@@ -2,7 +2,7 @@ import { FirebaseAuthService } from "@/services/firebaseAuth.service";
 import { FirestoreService } from "@/services/firestore.service";
 import { useAppDispatch } from "@/store/store";
 import { setUser } from "@/store/user/userSlice";
-import { IUserSignUpData } from "@/utils/interfaces/interfaces";
+import { IUserSignUpData } from "@/utils/interfaces/user.interfaces";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 

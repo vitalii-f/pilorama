@@ -1,4 +1,3 @@
-import { onAuthStateChanged } from "firebase/auth";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "@/pages/Home/HomePage/HomePage";
 import AdminPanel from "@/pages/AdminPanel/AdminPanel";
@@ -8,29 +7,22 @@ import NewsArticleDetail from "./news/NewsArticleDetail";
 import LoginPage from "@/pages/AuthPage/LogInPage";
 import SignUpPage from "@/pages/AuthPage/SignUpPage";
 import Profile from "@/pages/UserProfile/Profile";
-import { auth } from "@/utils/constants/firebase.constants";
 import UsersControl from "@/pages/AdminPanel/UsersControl/UsersControl";
 import Header from "../header/Header";
-import { setUser } from "@/store/user/userSlice";
-import { useAppDispatch } from "@/store/store";
-
+import Categorys from "@/pages/AdminPanel/Categorys/Сategories";
 
 function Router() {
-  const dispatch = useAppDispatch()
-
-  onAuthStateChanged(auth, (user) => {
-    user && dispatch(setUser())
-  })
-
   return (
     <BrowserRouter>
       <Header />
-      <main className="flex">
+      <main>
         <Routes>
           <Route path="/" element={<HomePage />}/>
+
           <Route path="/admin" element={<AdminPanel />}>
             <Route path='createNews' element={<CreateNews />}/>
             <Route path='usersControl'element={<UsersControl />}/>
+            <Route path='categorys' element={<Categorys />}/>
           </Route>
     
           <Route path="/articles" element={<ArticlesPage />}/>

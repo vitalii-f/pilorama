@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: "Roboto", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -23,7 +23,14 @@
   --color-bg-button: #1a1a1a;
   --color-border-button: #464646;
 
+  --color-border-input: #464646;
+  --color-bg-input: #1a1a1a;
+
+
   --color-bg-alert: #333333;
+}
+
+.sun-editor .se-toolbar {
 }
 
 .bg-secondary {
@@ -35,9 +42,15 @@
 }
 
 #root {
-  max-width: 1280px;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 2rem;
+}
+
+main {
+  height: 100%;
+  width: 100%;
+  display: flex;
 }
 
 * {
@@ -73,19 +86,22 @@ h2 {
   line-height: 1.5;
 }
 
-input:not([type='file']), button, li a {
+input:not([type='file']),
+button,
+li a {
   display: block;
   border-radius: 8px;
-  border: 1px solid var(--color-border-button);
+  border: 1px solid var(--color-border-input);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  background-color: var(--color-bg-button);
+  background-color: var(--color-bg-input);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 
-button:hover, a:hover {
+button:hover,
+a:hover {
   border-color: var(--color-secondary);
 }
 
@@ -95,7 +111,22 @@ button:focus-visible {
 }
 
 .scrollbar-container {
-  scrollbar-width: thin;
+  width: 150px;
+  overflow: auto;
+  /* scrollbar-width: thin; */
+}
+
+.scrollbar-container::-webkit-scrollbar {
+  width: 25px;
+}
+
+.scrollbar-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(253, 38, 38, 0.3);
+}
+
+.scrollbar-container::-webkit-scrollbar-thumb {
+  background-color: rgb(187, 0, 156);
+  outline: 5px solid rgb(0, 128, 255);
 }
 
 .MuiPaper-root {
@@ -106,7 +137,6 @@ button:focus-visible {
 .palette.primary {
   color: var(--color-text) !important;
   background-color: var(--color-text) !important;
-
 }
 
 .pagination {
@@ -126,6 +156,10 @@ button:focus-visible {
   transition: border-color 0.25s;
 }
 
+.categorys-select {
+  z-index: 10;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -143,7 +177,6 @@ button:focus-visible {
   .header-nav {
     display: none;
     flex-direction: column;
-
   }
 
   .header-nav ul {

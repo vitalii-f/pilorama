@@ -1,13 +1,31 @@
 import { NavLink } from "react-router-dom"
+import styled from "styled-components"
 
+const StyledNav = styled.nav`
+
+  min-width: 200px;
+
+  padding: 10px 0;
+  padding-right: 5px;
+  border-right: 2px solid white;
+`
+
+const StyledUl = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: 100%;
+`
 function AdminNavBar() {
   return (
-    <nav className='flex-shrink-0 w-60'>
-        <ul className='flex flex-col gap-4 pt-2 pr-2'>
-          <li className=''> <NavLink to='/admin/createNews'> Управление статьями </NavLink> </li>
-          <li className=''> <NavLink to='/admin/usersControl'> Управление пользователями </NavLink> </li>
-        </ul>
-      </nav>
+    <StyledNav>
+        <StyledUl>
+          <li> <NavLink to='/admin/createNews'>Статьи</NavLink> </li>
+          <li> <NavLink to='/admin/usersControl'>Пользователи</NavLink> </li>
+          <li> <NavLink to='/admin/categorys'>Категории</NavLink> </li>
+        </StyledUl>
+      </StyledNav>
   )
 }
 

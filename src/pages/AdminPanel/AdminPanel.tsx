@@ -2,8 +2,21 @@ import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import AdminNavBar from "@/components/layout/navigation/NavBar/AdminNavBar";
+import { IUserState } from "@/utils/interfaces/user.interfaces";
 import ErrorPage from "../ErrorPage/ErrorPage";
-import { IUserState } from "@/utils/interfaces/interfaces";
+import styled from "styled-components";
+
+const StyledDivWrapper = styled.div`
+  display: flex;
+  
+  width: 100%;
+`
+
+const StyledSection = styled.section`
+  width: 100%;
+  min-height: 100vh;
+  padding: 10px 5px;
+`
 
 function AdminPanel() {
   const user = useSelector((state: IUserState) => state.user.value)
@@ -14,13 +27,12 @@ function AdminPanel() {
   
   if (!haveAccess) return <ErrorPage errorCode={'403 - отказано в доступе'} />
   return (
-    <>
+    <StyledDivWrapper>
       <AdminNavBar />
-      <section className="w-full min-h-screen p-2 border-l-2 border-gray-200 border-solid">
-        <h1>Меню администратора</h1>
+      <StyledSection>
         <Outlet />
-      </section>
-    </>
+      </StyledSection>
+    </StyledDivWrapper>
   );
 }
 

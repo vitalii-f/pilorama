@@ -1,7 +1,8 @@
-import { AlertProps, UpdateProfileProps } from "@/utils/interfaces/interfaces"
+import { AlertProps } from "@/utils/interfaces/interfaces"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { User } from "firebase/auth"
+import { UpdateProfileProps } from "@/utils/interfaces/user.interfaces"
 
 //TODO Сделать полноценное изменение данных: пароль, почта, логин, фото(сделано)
 
@@ -11,7 +12,7 @@ interface UserDataChangeProps {
   setAlert({}: AlertProps): void
 }
 
-const UserDataChange: React.FunctionComponent<UserDataChangeProps> = ({ user, setModal, setAlert }) => {
+const UserDataChange = ({ user, setModal, setAlert }: UserDataChangeProps) => {
   const { handleSubmit, register } = useForm()
 
   const { mutate } = useMutation(
