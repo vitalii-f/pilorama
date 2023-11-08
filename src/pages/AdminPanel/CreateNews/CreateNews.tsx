@@ -1,21 +1,21 @@
 import { Controller, useForm } from 'react-hook-form'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Alert } from '@mui/material'
 import { useState } from 'react'
 import SunEditor from 'suneditor-react'
 import { StorageService } from '@/services/storage.service'
 import { FirestoreService } from '@/services/firestore.service'
-import { AlertProps } from '@/utils/interfaces/interfaces'
+import { AlertProps, ICategory } from '@/utils/interfaces/interfaces'
 import { ICreatedArticle } from '@/utils/interfaces/article.interfaces'
 import styled from 'styled-components'
 import 'suneditor/dist/css/suneditor.min.css'
-import Select from 'react-select'
+import AsyncSelect from 'react-select/async';
 
 //TODO Правильно выставить reset()
 
-interface CategorysOptions {
-  readonly value: string
-  readonly label: string
+interface CategoriesOptions {
+  value: string
+  label: string
 }
 
 const StyledForm = styled.form`
@@ -29,18 +29,6 @@ const StyledForm = styled.form`
 const StyledFileInput = styled.input`
   width: 260px;
 `
-
-const categorysOptions: readonly CategorysOptions[] = [
-  { value: 'Важное', label: 'Важное' },
-  { value: 'Политика', label: 'Политика' },
-  { value: 'Технологии', label: 'Технологии' },
-  { value: 'Финансы', label: 'Финансы' },
-  { value: 'Путишествия', label: 'Путишествия' },
-  { value: 'Кино', label: 'Кино' },
-  { value: 'Сериалы', label: 'Сериалы' },
-  { value: 'Крипто', label: 'Крипто' },
-  { value: 'Авто', label: 'Авто' },
-]
 
 function CreateNews() {
   const [alert, setAlert] = useState<AlertProps>({
@@ -107,6 +95,20 @@ function CreateNews() {
       )
   }
 
+  const { data, isSuccess } = useQuery<ICategory[]>({
+    queryKey: ['get categories'],
+    queryFn: () => FirestoreService.getСategoriesList()
+  })
+
+  const loadOptions = (): Promise<CategoriesOptions[]> | undefined => {
+    if (isSuccess) {
+      const localOptions: CategoriesOptions[] = data.map((item: ICategory) => {
+        return {value: item.name, label: item.name}
+      })
+      return new Promise((resolve) => resolve(localOptions))
+    } else return
+  }
+
   return (
     <>
       {showAlert(alert.type, alert.message)}
@@ -121,12 +123,14 @@ function CreateNews() {
           control={control}
           name='category'
           render={({ field }) => (
-            <Select
+            <AsyncSelect
+              key={isSuccess.toString()}
               onChange={(event) => field.onChange(event)}
               placeholder={'Выберите категории...'}
               isMulti
               name='categorys'
-              options={categorysOptions}
+              defaultOptions
+              loadOptions={loadOptions}
               className='categorys-select'
               classNamePrefix='select'
               theme={(theme) => ({

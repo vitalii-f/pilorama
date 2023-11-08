@@ -26,8 +26,9 @@
   --color-border-input: #464646;
   --color-bg-input: #1a1a1a;
 
-
   --color-bg-alert: #333333;
+
+  --color-red-delete: #EE204D;
 }
 
 .sun-editor .se-toolbar {
@@ -96,7 +97,6 @@ li a {
   font-size: 1em;
   font-weight: 500;
   background-color: var(--color-bg-input);
-  cursor: pointer;
   transition: border-color 0.25s;
 }
 

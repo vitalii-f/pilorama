@@ -118,10 +118,13 @@ export const FirestoreService = {
         return responce
     },
     async addCategory(name: string) {
-        console.log('adsdas')
         const data: ICategory = {
             name: name
         }
         return await setDoc(doc(db, 'categories', name), data);
+    },
+    async deleteCategoryByName(name: string) {
+        const categoryRef = doc(db, 'categories', name)
+        return await deleteDoc(categoryRef)
     }
 }

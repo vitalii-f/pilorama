@@ -9,6 +9,7 @@ import { IUserState } from '@/utils/interfaces/user.interfaces'
 import { IGetedArticle } from '@/utils/interfaces/article.interfaces'
 import LoadingSpinner from '../loading/LoadingSpinner'
 import styled from 'styled-components'
+import NewsCategories from './NewsCategories'
 
 const StyledNewsFeedSection = styled.section`
   max-width: 1280px;
@@ -20,7 +21,7 @@ const StyledNewsFeedSection = styled.section`
 
 function NewsFeed() {
   const user = useSelector((state: IUserState) => state.user.value)
-  
+
   const [haveAccess, setHaveAccess] = useState<boolean>(false)
   useEffect(() => {
     if (user && user.userRoles) setHaveAccess(user?.userRoles.includes('admin'))
@@ -29,12 +30,14 @@ function NewsFeed() {
   const [itemsPerPage, setItemsPerPage] = useState<number>(2)
   const [currentPage, setCurrentPage] = useState<number>(0)
 
-  const { data, isLoading, isError } = useQuery(
-    {
-      queryKey: ['articles', currentPage, itemsPerPage],
-      queryFn: async () => await FirestoreService.getArticles(itemsPerPage, currentPage * itemsPerPage)
-    }
-  )
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['articles', currentPage, itemsPerPage],
+    queryFn: async () =>
+      await FirestoreService.getArticles(
+        itemsPerPage,
+        currentPage * itemsPerPage
+      ),
+  })
   if (isError) return <h2> Error... </h2>
   if (isLoading) return <LoadingSpinner />
 
@@ -49,27 +52,29 @@ function NewsFeed() {
 
   const currentItems: IGetedArticle[] = data.news
   const pageCount = Math.ceil(data.newsCount / itemsPerPage)
-  
+
   // redirect('/home')
-  
 
   return (
     <StyledNewsFeedSection className='flex flex-col w-full'>
-      <NewsPagination
-        itemsPerPage={itemsPerPage}
-        setItemsPerPage={setItemsPerPage}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        pageCount={pageCount}
-      />
+      <NewsCategories />
       {currentItems.length ? (
-        currentItems.map((article) => (
-          <NewsArticle
-            article={article}
-            haveAccess={haveAccess}
-            key={article.id}
+        <>
+          {currentItems.map((article) => (
+            <NewsArticle
+              article={article}
+              haveAccess={haveAccess}
+              key={article.id}
+            />
+          ))}
+          <NewsPagination
+            itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            pageCount={pageCount}
           />
-        ))
+        </>
       ) : (
         <h2> No Articles</h2>
       )}
