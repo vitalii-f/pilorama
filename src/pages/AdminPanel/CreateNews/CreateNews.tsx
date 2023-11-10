@@ -38,7 +38,6 @@ function CreateNews() {
   const {
     register,
     handleSubmit,
-    reset,
     control,
     formState: { errors },
   } = useForm<ICreatedArticle>({
@@ -61,7 +60,6 @@ function CreateNews() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['add articles'] })
-      // reset();
       setAlert({ type: 'success', message: 'Пост успешно опубликован!' })
     },
     onError: (error) => {

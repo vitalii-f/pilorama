@@ -12,7 +12,7 @@ interface UserDataChangeProps {
   setAlert({}: AlertProps): void
 }
 
-const UserDataChange = ({ user, setModal, setAlert }: UserDataChangeProps) => {
+const UserDataChange = ({ setModal, setAlert }: UserDataChangeProps) => {
   const { handleSubmit, register } = useForm()
 
   const { mutate } = useMutation(

@@ -141,7 +141,6 @@ const Сategories = () => {
       )
     }
   }
-
   return (
     <StyledContainer>
       <Dialog open={dialogOpened.opened} onClose={handleModalClose}>

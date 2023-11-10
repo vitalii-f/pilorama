@@ -9,7 +9,7 @@ import SignUpPage from "@/pages/AuthPage/SignUpPage";
 import Profile from "@/pages/UserProfile/Profile";
 import UsersControl from "@/pages/AdminPanel/UsersControl/UsersControl";
 import Header from "../header/Header";
-import Categorys from "@/pages/AdminPanel/Categorys/Сategories";
+import Categorys from "@/pages/AdminPanel/Categories/Сategories";
 
 function Router() {
   return (

@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase/firestore'
 
 export interface INews {
-  //   news: IArticle
+  news: IGetedArticle[]
   newsCount: number
 }
 

@@ -2,7 +2,7 @@ import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, limit,
 import { FirebaseAuthService } from '@/services/firebaseAuth.service';
 import { db } from "@/utils/constants/firebase.constants";
 import { ICreatedArticle } from "@/utils/interfaces/article.interfaces";
-import { IGetedArticle } from './../utils/interfaces/article.interfaces';
+import { IGetedArticle, INews } from './../utils/interfaces/article.interfaces';
 import { ICategory } from "@/utils/interfaces/interfaces";
 
 export const FirestoreService = {
@@ -33,9 +33,9 @@ export const FirestoreService = {
             console.error('Error adding document: ', e);
           }
     },
-    async getArticles(lim = 1, startIndex = 0) {
+    async getArticles(lim = 1, startIndex = 0): Promise<INews> {
         const coll = collection(db, 'news_articles')
-        const dataCount = (await getCountFromServer(coll)).data().count 
+        const dataCount = (await getCountFromServer(coll)).data().count
         const currentIndex = dataCount - startIndex - 1
         const dbQuery = query(coll, orderBy('id', 'desc'), where('id', '<=', currentIndex), limit(lim))
         const querySnapshot = await getDocs(dbQuery)
@@ -46,6 +46,26 @@ export const FirestoreService = {
             response.push(data)
         });
 
+        return {news: response, newsCount: dataCount}
+    },
+    async getFilteredArticles(lim = 1, startIndex = 0, category: string) {
+        const response: IGetedArticle[] = []
+
+        const coll = collection(db, 'news_articles')
+        const dataCount = (await getCountFromServer(coll)).data().count
+        const currentIndex = dataCount - startIndex - 1
+        const dbQuery = query(coll, orderBy('id', 'desc'), where('id', '<=', currentIndex), where('category', '==', [category]), limit(lim))
+
+        try {
+            const querySnapshot = await getDocs(dbQuery)
+            querySnapshot.forEach((doc) => {
+                const data = doc.data() as IGetedArticle
+                response.push(data)
+            });
+        } catch (e) {
+            console.warn(e)
+        }
+        
         return {news: response, newsCount: dataCount}
     },
     async getArticleById(id: number): Promise<IGetedArticle> {

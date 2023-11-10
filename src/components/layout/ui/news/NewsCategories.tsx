@@ -1,6 +1,7 @@
 import { FirestoreService } from '@/services/firestore.service'
 import { useQuery } from '@tanstack/react-query'
 import styled from 'styled-components'
+import RestartAltIcon from '@mui/icons-material/RestartAlt'
 
 const StyledContainer = styled.div`
   display: flex;
@@ -11,6 +12,7 @@ const StyledContainer = styled.div`
 const StyledUl = styled.ul`
   width: 100%;
   display: flex;
+  align-items: center;
   gap: 10px;
 
   padding: 7px 0;
@@ -26,13 +28,23 @@ const StyledLi = styled.li`
   padding: 5px 10px;
   background-color: var(--color-bg-input);
 
-  border: 2px solid white;
+  border: 2px solid ${props => props.color || '#FFF'};
   border-radius: 10px;
 
   cursor: pointer;
 `
 
-const NewsCategories = () => {
+interface NewsCategoryProps {
+  filterCategory: string
+  setFilterCategory(filterCategory: string): void
+  refetch(): void
+}
+
+const NewsCategories = ({
+  filterCategory,
+  setFilterCategory,
+  refetch,
+}: NewsCategoryProps) => {
   const { data, isSuccess } = useQuery({
     queryKey: ['category'],
     queryFn: async () => await FirestoreService.getСategoriesList(),
@@ -42,19 +54,33 @@ const NewsCategories = () => {
     if (isSuccess) {
       return (
         <StyledUl>
+          {filterCategory && (
+            <RestartAltIcon
+            sx={{cursor: 'pointer'}}
+              onClick={() => {
+                setFilterCategory('')
+                refetch()
+              }}
+            />
+          )}
           {data.map((item) => (
-            <StyledLi key={item.name}>{item.name}</StyledLi>
+            <StyledLi
+              color={item.name === filterCategory ? 'var(--color-secondary)' : '#FFF'}
+              key={item.name}
+              onClick={() => {
+                setFilterCategory(item.name)
+                refetch()
+              }}
+            >
+              {item.name}
+            </StyledLi>
           ))}
         </StyledUl>
       )
     }
   }
 
-  return (
-    <StyledContainer>
-      {renderCategoriesList()}
-    </StyledContainer>
-  )
+  return <StyledContainer>{renderCategoriesList()}</StyledContainer>
 }
 
 export default NewsCategories
