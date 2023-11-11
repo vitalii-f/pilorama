@@ -17,7 +17,11 @@ interface modalDeleteProps {
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 25px 15px;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
 `
 
 const StyledForm = styled.form`

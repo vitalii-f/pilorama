@@ -8,8 +8,11 @@ import styled from "styled-components";
 
 const StyledDivWrapper = styled.div`
   display: flex;
-  
   width: 100%;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
 `
 
 const StyledSection = styled.section`
