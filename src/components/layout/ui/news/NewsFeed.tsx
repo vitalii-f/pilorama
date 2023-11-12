@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { CircularProgress } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import NewsArticle from './NewsArticle'

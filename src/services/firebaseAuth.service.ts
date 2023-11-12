@@ -1,6 +1,5 @@
 import { auth } from '@/utils/constants/firebase.constants'
 import {
-    ErrorFn,
   User,
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -10,7 +9,6 @@ import {
 } from 'firebase/auth'
 import { UpdateProfileProps } from '@/utils/interfaces/user.interfaces'
 import { FirebaseError } from 'firebase/app'
-import { ErrorData } from '@firebase/util'
 
 export const FirebaseAuthService = {
   async createUser(email: string, password: string, login: string) {

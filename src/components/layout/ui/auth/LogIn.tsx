@@ -51,7 +51,7 @@ function LogIn() {
         // console.log(AuthErrorCode[auth as keyof typeof AuthErrorCode])
       // }
       // formik.setFieldError('email', auth)
-      // if (auth) dispatch(setUser())
+      if (auth) dispatch(setUser())
     }
   })
 
