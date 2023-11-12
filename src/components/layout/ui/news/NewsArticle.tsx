@@ -66,12 +66,8 @@ const NewsArticle = ({ article, haveAccess }: NewsArticleProps) => {
             <p className='text-xs'>Автор:{article.author}</p>
           </div>
           <div className='relative'>
-            {haveAccess ? (
-              <button onClick={() => togleMenu(article.id)}>...</button>
-            ) : null}
-            {elementVisibility.togled && elementVisibility.id === article.id ? (
-              <ArticleOptionsMenu id={article.id} />
-            ) : null}
+            {haveAccess && <button onClick={() => togleMenu(article.id)}>...</button>}
+            {elementVisibility.togled && elementVisibility.id === article.id && <ArticleOptionsMenu id={article.id} />}
           </div>
         </div>
         <div className='flex justify-between'>

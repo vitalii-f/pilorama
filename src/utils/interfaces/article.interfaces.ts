@@ -7,7 +7,7 @@ export interface INews {
 
 export interface ICreatedArticle {
   author: string | null | undefined
-  category: string[]
+  category: string[] | CategoriesOptions
   creation_date: Date
   id?: number
   imgURL: any
@@ -23,4 +23,9 @@ export interface IGetedArticle {
   imgURL: any
   text: string
   title: string
+}
+
+export interface CategoriesOptions {
+  value: string
+  label: string
 }

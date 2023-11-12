@@ -1,9 +1,10 @@
-import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { FirebaseAuthService } from "@/services/firebaseAuth.service";
 import { setUser } from "@/store/user/userSlice";
 import { useAppDispatch } from "@/store/store";
 import { IUserLogInData } from "@/utils/interfaces/user.interfaces";
+import { useFormik } from "formik";
+import * as Yup from "yup"
 
 const StyledForm = styled.form`
   display: flex;
@@ -18,50 +19,64 @@ const StyledInput = styled.input`
   border-radius: 5px;
 `
 
+const LogInSchema = Yup.object().shape({
+  email: Yup.string().email('Неверный Email').required('Обязательное поле'),
+  password: Yup.string().min(6, 'Минимум 6 символов').max(16, 'Максимум 16 символов').required('Обязательное поле')
+})
+
 function LogIn() {
   const dispatch = useAppDispatch()
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IUserLogInData>({ mode: "onChange" });
-
-  const authUser = (data: IUserLogInData) => {
-    FirebaseAuthService.authUser(data.email, data.password)
-    dispatch(setUser())
+  const test = {
+    test1: 'test11',
+    test2: 'test22'
   }
 
-  return (
-    <StyledForm
+  const aboba = 'test2'
 
-      onSubmit={handleSubmit(authUser)}
-    >
+  console.log(test[aboba])
+
+  const formik = useFormik<IUserLogInData>({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    validationSchema: LogInSchema,
+    onSubmit: async (value) => {
+      const auth = await FirebaseAuthService.authUser(value.email, value.password)
+      // if (typeof auth === 'string') {
+        // const errorCode: keyof typeof AuthErrorCode = auth as keyof typeof AuthErrorCode
+        // console.log(AuthErrorCode[errorCode])
+        // console.log(auth)
+        // console.log(AuthErrorCode['auth/app-deleted'])
+        // console.log(AuthErrorCode[auth as keyof typeof AuthErrorCode])
+      // }
+      // formik.setFieldError('email', auth)
+      // if (auth) dispatch(setUser())
+    }
+  })
+
+  return (
+    <StyledForm onSubmit={formik.handleSubmit}>
       <label className="text-2xl text-center">Вход в учётную запись</label>
       <StyledInput
-        {...register("email", {
-          minLength: { value: 5, message: "Минимум 5 символов" },
-          maxLength: { value: 30, message: "Максимум 30 символов" },
-        })}
+        onChange={formik.handleChange}
+        name="email"
         type="email"
         placeholder="Введите e-mail"
         required
       />
-      {errors.email && <p className="font-bold text-red-500"> {errors.email.message} </p>}
+      {formik.errors.email && <p className="font-bold text-red-500"> {formik.errors.email} </p>}
 
       <StyledInput
-        {...register("password", {
-          required: true,
-          minLength: { value: 6, message: "Минимум 6 символов" },
-          maxLength: { value: 16, message: "Максимум 16 символов" },
-        })}
+        onChange={formik.handleChange}
+        name='password'
         type="password"
         placeholder="Введите пароль"
         required
       />
-      {errors.password && <p className="font-bold text-red-500"> {errors.password.message} </p>}
+      {formik.errors.password && <p className="font-bold text-red-500"> {formik.errors.password} </p>}
       
-      <button>Войти в систему</button>
+      <button type='submit'>Войти в систему</button>
     </StyledForm>
   );
 }

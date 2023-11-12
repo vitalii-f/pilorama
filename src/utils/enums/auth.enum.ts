@@ -1,0 +1,16 @@
+// export enum AuthErrorCode {
+//   'auth/app-deleted' = 'app deleted',
+//   'auth/app-not-authorized' = 'app not authorized',
+//   'auth/argument-error' = 'argument error',
+//   'auth/invalid-api-key' = 'invalid api key',
+//   'auth/invalid-user-token' = 'invalid user token',
+//   'auth/invalid-tenant-id' = 'invalid tenant id',
+//   'auth/network-request-failed' = 'network request failed',
+//   'auth/operation-not-allowed' = 'operation not allowed',
+//   'auth/requires-recent-login' = 'requires recent login',
+//   'auth/too-many-requests' = 'too many requests',
+//   'auth/unauthorized-domain' = 'unauthorized domain',
+//   'auth/user-disabled' = 'user disabled',
+//   'auth/user-token-expired' = 'user token expired',
+//   'auth/web-storage-unsupported' = 'web storage unsupported',
+// }

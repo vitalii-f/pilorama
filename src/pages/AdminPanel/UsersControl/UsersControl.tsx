@@ -21,10 +21,8 @@ function UsersControl() {
   )
   if (isLoading) return <h2> Loading... </h2>
   if (error) return <h2> Error </h2>
-  console.log(typeof data)
 
   const rows: any = data
-  console.log(data)
   return (
       <div className="">
         Пользователи

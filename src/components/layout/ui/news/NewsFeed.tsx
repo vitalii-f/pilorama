@@ -15,7 +15,7 @@ const StyledNewsFeedSection = styled.section`
   max-width: 1280px;
   width: 100%;
   margin: 0 auto;
-  
+
   display: flex;
   flex-direction: column;
 `
@@ -33,36 +33,47 @@ function NewsFeed() {
 
   const [filterCategory, setFilterCategory] = useState<string>('')
 
-  const { data, isLoading, isError, refetch} = useQuery<INews>({
+  const { data, isLoading, isError, refetch } = useQuery<INews>({
     queryKey: ['articles', currentPage, itemsPerPage, filterCategory],
     queryFn: async () => {
       if (filterCategory.length) {
-        return await FirestoreService.getFilteredArticles(itemsPerPage, currentPage * itemsPerPage, filterCategory)
+        return await FirestoreService.getFilteredArticles(
+          itemsPerPage,
+          currentPage * itemsPerPage,
+          filterCategory
+        )
       } else {
-        return await FirestoreService.getArticles(itemsPerPage, currentPage * itemsPerPage)
+        return await FirestoreService.getArticles(
+          itemsPerPage,
+          currentPage * itemsPerPage
+        )
       }
     },
   })
-  
-  
-  if (isError) return <h2> Error... </h2>
+
+  if (isError) return <h2>Error...</h2>
   if (isLoading) return <LoadingSpinner />
   if (!data) return <LoadingSpinner />
-  
-  if (!Array.isArray(data?.news))
-    return (
-      <div className='flex flex-col items-center content-center w-full gap-y-5'>
-        <h2 className='text-2xl text-yellow-400 '>Loading... </h2>
-        <CircularProgress />
-      </div>
-    )
+
+  // if (!Array.isArray(data.news))
+  //   return (
+  //     <div className='flex flex-col items-center content-center w-full gap-y-5'>
+  //       <h2 className='text-2xl text-yellow-400 '>Loading...</h2>
+  //       <CircularProgress />
+  //     </div>
+  //   )
 
   const currentItems: IGetedArticle[] = data.news
   const pageCount: number = Math.ceil(data.newsCount / itemsPerPage)
+  console.log(currentItems)
 
   return (
     <StyledNewsFeedSection>
-      <NewsCategories filterCategory={filterCategory} setFilterCategory={setFilterCategory} refetch={refetch} />
+      <NewsCategories
+        filterCategory={filterCategory}
+        setFilterCategory={setFilterCategory}
+        refetch={refetch}
+      />
       {currentItems.length ? (
         <>
           {currentItems.map((article) => (
@@ -81,7 +92,7 @@ function NewsFeed() {
           />
         </>
       ) : (
-        <h2> No Articles</h2>
+        <h2>No Articles</h2>
       )}
     </StyledNewsFeedSection>
   )
