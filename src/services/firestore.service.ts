@@ -52,8 +52,10 @@ export const FirestoreService = {
         const response: IGetedArticle[] = []
 
         const coll = collection(db, 'news_articles')
-        const dataCount = (await getCountFromServer(coll)).data().count
-        const currentIndex = dataCount - startIndex - 1
+        const countQuery = query(coll, where('category', '==', [category]))
+        const dataCount = (await getCountFromServer(countQuery)).data().count
+        const currentIndex = dataCount - startIndex
+        console.log(currentIndex)
         const dbQuery = query(coll, orderBy('id', 'desc'), where('id', '<=', currentIndex), where('category', '==', [category]), limit(lim))
 
         try {
@@ -65,7 +67,6 @@ export const FirestoreService = {
         } catch (e) {
             console.warn(e)
         }
-        
         return {news: response, newsCount: dataCount}
     },
     async getArticleById(id: number): Promise<IGetedArticle> {

@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore"
 
 export interface UserProps {
   userData: User | null
-  userRoles: TUserRoles | null
+  userRoles: TUserRoles
 }
 
 export interface IUserState {

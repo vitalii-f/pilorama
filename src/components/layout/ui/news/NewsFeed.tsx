@@ -9,6 +9,7 @@ import { IGetedArticle, INews } from '@/utils/interfaces/article.interfaces'
 import LoadingSpinner from '../loading/LoadingSpinner'
 import styled from 'styled-components'
 import NewsCategories from './NewsCategories'
+import ErrorPage from '@/pages/ErrorPage/ErrorPage'
 
 const StyledNewsFeedSection = styled.section`
   max-width: 1280px;
@@ -32,7 +33,7 @@ function NewsFeed() {
 
   const [filterCategory, setFilterCategory] = useState<string>('')
 
-  const { data, isLoading, isError, refetch } = useQuery<INews>({
+  const { data, isLoading, isError, refetch, error } = useQuery<INews>({
     queryKey: ['articles', currentPage, itemsPerPage, filterCategory],
     queryFn: async () => {
       if (filterCategory.length) {
@@ -50,21 +51,14 @@ function NewsFeed() {
     },
   })
 
-  if (isError) return <h2>Error...</h2>
+  if (isError) return <ErrorPage errorCode={error.message} />
   if (isLoading) return <LoadingSpinner />
   if (!data) return <LoadingSpinner />
 
-  // if (!Array.isArray(data.news))
-  //   return (
-  //     <div className='flex flex-col items-center content-center w-full gap-y-5'>
-  //       <h2 className='text-2xl text-yellow-400 '>Loading...</h2>
-  //       <CircularProgress />
-  //     </div>
-  //   )
-
   const currentItems: IGetedArticle[] = data.news
+  console.log(data.newsCount)
+  console.log(data)
   const pageCount: number = Math.ceil(data.newsCount / itemsPerPage)
-  console.log(currentItems)
 
   return (
     <StyledNewsFeedSection>

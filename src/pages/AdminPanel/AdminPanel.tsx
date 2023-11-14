@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 import AdminNavBar from "@/components/layout/navigation/NavBar/AdminNavBar";
 import { IUserState } from "@/utils/interfaces/user.interfaces";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import styled from "styled-components";
+import LoadingSpinner from "@/components/layout/ui/loading/LoadingSpinner";
 
 const StyledDivWrapper = styled.div`
   display: flex;
@@ -23,12 +23,11 @@ const StyledSection = styled.section`
 
 function AdminPanel() {
   const user = useSelector((state: IUserState) => state.user.value)
-  const [haveAccess, setHaveAccess] = useState(false)
-  useEffect(() =>{
-    if (user && user.userRoles) setHaveAccess(user?.userRoles.includes('admin'))
-  }, [user])
-  
-  if (!haveAccess) return <ErrorPage errorCode={'403 - отказано в доступе'} />
+
+  console.log(user)
+  if (user === undefined) return <LoadingSpinner />
+  if (!user || !user.userRoles.includes('admin')) return <ErrorPage errorCode={'403 - отказано в доступе'} />
+
   return (
     <StyledDivWrapper>
       <AdminNavBar />

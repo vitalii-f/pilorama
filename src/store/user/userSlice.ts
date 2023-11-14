@@ -35,7 +35,6 @@ export const setUser = createAsyncThunk(
   async () => {
     const userData: User | null = FirebaseAuthService.userState()
     const userRoles: TUserRoles | null = userData && userData.email !== null ? await FirestoreService.getRole(userData.email) : null
-    // console.log({userData, userRoles})
     return {userData, userRoles}
   }
 )

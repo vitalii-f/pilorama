@@ -9,6 +9,10 @@ const StyledDiv = styled.div`
   margin: 0 auto;
 `
 
+const StyledLink = styled(Link)`
+  color: var(--color-secondary);
+`
+
 function LoginPage() {
   const user = useSelector((state: IUserState) => state.user.value)
   return (
@@ -20,7 +24,7 @@ function LoginPage() {
           <>
             <LogIn />
             <p className='mt-4'>Новый пользователь?</p>
-            <p><Link to='/signup'>Зарегестрировать учётную запись</Link></p>
+            <p><StyledLink to='/signup'>Зарегестрировать учётную запись</StyledLink></p>
           </>
         )}
       </StyledDiv>

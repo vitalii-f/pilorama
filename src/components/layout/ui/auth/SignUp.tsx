@@ -1,87 +1,101 @@
-import { FirebaseAuthService } from "@/services/firebaseAuth.service";
-import { FirestoreService } from "@/services/firestore.service";
-import { useAppDispatch } from "@/store/store";
-import { setUser } from "@/store/user/userSlice";
-import { IUserSignUpData } from "@/utils/interfaces/user.interfaces";
-import { useForm } from "react-hook-form";
-import styled from "styled-components";
+import { FirebaseAuthService } from '@/services/firebaseAuth.service'
+import { FirestoreService } from '@/services/firestore.service'
+import { useAppDispatch } from '@/store/store'
+import { setUser } from '@/store/user/userSlice'
+import { IUserSignUpData } from '@/utils/interfaces/user.interfaces'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { StyledErrorParagraph, StyledForm, StyledInput } from './AuthStyle'
+import { useState } from 'react'
+import { AuthErrorCode } from '@/utils/enums/auth.enum'
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 400px;
-  margin-top: 50px;
-`
-
-const StyledInput = styled.input`
-  padding: 15px;
-  border-radius: 5px;
-`
+const SignUpSchema = Yup.object().shape({
+  email: Yup.string().email('Неверный Email').required('Обязательное поле'),
+  password: Yup.string()
+    .min(6, 'Минимум 6 символов')
+    .max(16, 'Максимум 16 символов')
+    .required('Обязательное поле'),
+  login: Yup.string()
+    .min(6, 'Минимум 6 символов')
+    .max(16, 'Максимум 16 символов')
+    .required('Обязательное поле'),
+})
 
 function SignUp() {
-  const dispatch = useAppDispatch()
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IUserSignUpData>({
-    mode: "onChange",
-  });
+  const [errorCode, setErrorCode] = useState<string>('')
 
-  const registerUser = async (data: IUserSignUpData) => {
-    const currentUser = await FirebaseAuthService.createUser(data.email, data.password, data.login)
-    if (currentUser) await FirestoreService.addRole(currentUser.uid, ['default'], data.email, data.login)
-    dispatch(setUser())
-  };
+  const dispatch = useAppDispatch()
+
+  const formik = useFormik<IUserSignUpData>({
+    initialValues: {
+      login: '',
+      email: '',
+      password: '',
+    },
+    validationSchema: SignUpSchema,
+    onSubmit: async (data) => {
+      console.log(data)
+      const currentUser = await FirebaseAuthService.createUser(
+        data.email,
+        data.password,
+        data.login
+      )
+      console.log(currentUser)
+      if (typeof currentUser === 'string') {
+        setErrorCode(AuthErrorCode[currentUser as keyof typeof AuthErrorCode])
+      } else if (currentUser) {
+        await FirestoreService.addRole(
+          currentUser.uid,
+          ['default'],
+          data.email,
+          data.login
+        )
+        dispatch(setUser())
+      }
+    },
+  })
 
   return (
-    <StyledForm
-      onSubmit={handleSubmit(registerUser)}
-    >
-      <label className="text-2xl text-center">Реистрация</label>
-      
+    <StyledForm onSubmit={formik.handleSubmit}>
+      <label className='text-2xl text-center'>Реистрация</label>
       <StyledInput
-        {...register("login", {
-          required: true,
-          minLength: { value: 3, message: "Минимум 3 символа" },
-          maxLength: { value: 16, message: "Максимум 16 символов" },
-          pattern: { value: /^[a-z0-9_-]{3,16}$/, message: "Неверный формат ввода"},
-        })}
-        type="text"
-        placeholder="Введите логин"
+        name='login'
+        type='text'
+        onChange={formik.handleChange}
+        placeholder='Введите логин'
         required
       />
-      {errors.login && <p className="font-bold text-red-500"> {errors.login.message?.toString()} </p>}
-      
-      <StyledInput
-        {...register("email", {
-          minLength: { value: 5, message: "Минимум 5 символов" },
-          maxLength: { value: 30, message: "Максимум 30 символов" },
-        })}
-        type="email"
-        placeholder="Введите e-mail"
-        required
-      />
-      {errors.email && <p className="font-bold text-red-500"> {errors.email.message?.toString()} </p>}
+      {formik.errors.login && (
+        <StyledErrorParagraph>{formik.errors.login}</StyledErrorParagraph>
+      )}
 
       <StyledInput
-        {...register("password", {
-          required: true,
-          minLength: { value: 6, message: "Минимум 6 символов" },
-          maxLength: { value: 16, message: "Максимум 16 символов" },
-        })}
-        type="password"
-        placeholder="Введите пароль"
+        name='email'
+        type='email'
+        onChange={formik.handleChange}
+        placeholder='Введите e-mail'
         required
       />
-      {errors.password && <p className="font-bold text-red-500"> {errors.password.message?.toString()} </p>}
-      
-      <button>Зарегестрироваться</button>
-      {/* {alertMessage && <p> {alertMessage} </p>} */}
+      {formik.errors.email && (
+        <StyledErrorParagraph>{formik.errors.email}</StyledErrorParagraph>
+      )}
+
+      <StyledInput
+        name='password'
+        type='password'
+        onChange={formik.handleChange}
+        placeholder='Введите пароль'
+        required
+      />
+      {formik.errors.password && (
+        <StyledErrorParagraph>{formik.errors.password}</StyledErrorParagraph>
+      )}
+
+      <button type='submit'>Зарегестрироваться</button>
+      {errorCode && <StyledErrorParagraph>{errorCode}</StyledErrorParagraph>}
+
     </StyledForm>
-  );
+  )
 }
 
-export default SignUp;
+export default SignUp
