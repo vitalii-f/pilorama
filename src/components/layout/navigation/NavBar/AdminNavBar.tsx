@@ -22,9 +22,22 @@ const StyledUl = styled.ul`
   width: 100%;
 
   @media (max-width: 900px) {
+    align-items: center;
+    padding: 10px 0;
     flex-direction: row;
     overflow: auto;
     scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      height: 2px;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-bg-scrollbar);
+    }
   }
 `
 function AdminNavBar() {

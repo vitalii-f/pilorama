@@ -18,7 +18,16 @@ const StyledUl = styled.ul`
   padding: 7px 0;
 
   overflow-x: scroll;
-  scrollbar-width: thin;
+  &::-webkit-scrollbar {
+    height: 2px;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-bg-scrollbar);
+  }
 `
 
 const StyledLi = styled.li`
@@ -28,7 +37,7 @@ const StyledLi = styled.li`
   padding: 5px 10px;
   background-color: var(--color-bg-input);
 
-  border: 2px solid ${props => props.color || '#FFF'};
+  border: 2px solid ${(props) => props.color || '#FFF'};
   border-radius: 10px;
 
   cursor: pointer;
@@ -37,12 +46,14 @@ const StyledLi = styled.li`
 interface NewsCategoryProps {
   filterCategory: string
   setFilterCategory(filterCategory: string): void
+  setCurrentPage(currentPage: number): void
   refetch(): void
 }
 
 const NewsCategories = ({
   filterCategory,
   setFilterCategory,
+  setCurrentPage,
   refetch,
 }: NewsCategoryProps) => {
   const { data, isSuccess } = useQuery({
@@ -56,8 +67,9 @@ const NewsCategories = ({
         <StyledUl>
           {filterCategory && (
             <RestartAltIcon
-            sx={{cursor: 'pointer'}}
+              sx={{ cursor: 'pointer' }}
               onClick={() => {
+                setCurrentPage(0)
                 setFilterCategory('')
                 refetch()
               }}
@@ -65,9 +77,12 @@ const NewsCategories = ({
           )}
           {data.map((item) => (
             <StyledLi
-              color={item.name === filterCategory ? 'var(--color-secondary)' : '#FFF'}
+              color={
+                item.name === filterCategory ? 'var(--color-secondary)' : '#FFF'
+              }
               key={item.name}
               onClick={() => {
+                setCurrentPage(0)
                 setFilterCategory(item.name)
                 refetch()
               }}

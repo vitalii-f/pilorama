@@ -49,6 +49,7 @@ function NewsFeed() {
         )
       }
     },
+    refetchOnWindowFocus: false
   })
 
   if (isError) return <ErrorPage errorCode={error.message} />
@@ -56,8 +57,6 @@ function NewsFeed() {
   if (!data) return <LoadingSpinner />
 
   const currentItems: IGetedArticle[] = data.news
-  console.log(data.newsCount)
-  console.log(data)
   const pageCount: number = Math.ceil(data.newsCount / itemsPerPage)
 
   return (
@@ -65,6 +64,7 @@ function NewsFeed() {
       <NewsCategories
         filterCategory={filterCategory}
         setFilterCategory={setFilterCategory}
+        setCurrentPage={setCurrentPage}
         refetch={refetch}
       />
       {currentItems.length ? (

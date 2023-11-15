@@ -45,7 +45,7 @@ function NavBar() {
                     aria-label="open drawer"
                     edge="start"
                     onClick={handleDrawerToggle}
-                    sx={{ mr: 2, display: { md: 'none' } }}
+                    sx={{ mr: 2, display: 'none', '@media (max-width: 900px)': {display: 'block'}}}
                 >
                     <MenuIcon color='secondary' />
                 </IconButton>
