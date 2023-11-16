@@ -16,6 +16,15 @@ const StyledPaginate = styled(ReactPaginate).attrs({
     border-color: #646cff;
   }
 `
+
+const StyledSelect = styled.select`
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-input);
+  background-color: var(--color-bg-dark);
+`
+
 interface NewsPaginationProps {
   itemsPerPage: number
   setItemsPerPage(itemsPerPage: number): void
@@ -43,14 +52,13 @@ const NewsPagination = ({ itemsPerPage, setItemsPerPage, currentPage, setCurrent
           forcePage={currentPage}
           className="pagination"
         />
-        <select
-          className="h-10"
+        <StyledSelect
           onChange={(item) => {setItemsPerPage(+item.target.value)}}
           value={itemsPerPage}>
           <option>2</option>
           <option>5</option>
           <option>10</option>
-        </select>
+        </StyledSelect>
       </div>
   )
 }

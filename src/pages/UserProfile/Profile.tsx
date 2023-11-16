@@ -28,7 +28,7 @@ const Profile = () => {
   })
 
   async function sendVerefyMessage() {
-    console.log(await FirebaseAuthService.verefyEmail())
+    await FirebaseAuthService.verefyEmail()
   }
 
   function showAlert(type: string, message: string) {
@@ -37,7 +37,9 @@ const Profile = () => {
   }
   
   const creationDate = user && user.metadata && user.metadata.creationTime && new Date(user.metadata.creationTime)
-  if (!user) return <LoadingSpinner />
+  if (user === undefined) return <LoadingSpinner />
+  if (user === null) return <h1>Please, log in to your account.</h1>
+
   return (
     user && (
       <section id='profile' className="w-full mt-5">

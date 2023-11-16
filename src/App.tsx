@@ -6,9 +6,9 @@ import { auth } from '@/utils/constants/firebase.constants'
 
 const App = () => {
   const dispatch = useAppDispatch()
-
-  onAuthStateChanged(auth, (user) => {
-    user && dispatch(setUser())
+  
+  onAuthStateChanged(auth, (_user) => {
+    dispatch(setUser())
   })
 
   return (

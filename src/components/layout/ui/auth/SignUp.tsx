@@ -34,13 +34,11 @@ function SignUp() {
     },
     validationSchema: SignUpSchema,
     onSubmit: async (data) => {
-      console.log(data)
       const currentUser = await FirebaseAuthService.createUser(
         data.email,
         data.password,
         data.login
       )
-      console.log(currentUser)
       if (typeof currentUser === 'string') {
         setErrorCode(AuthErrorCode[currentUser as keyof typeof AuthErrorCode])
       } else if (currentUser) {

@@ -18,7 +18,6 @@ export const FirebaseAuthService = {
           email,
           password
         )
-        console.log(userCredential)
         if (auth.currentUser) await updateProfile(auth.currentUser, { displayName: login })
         return userCredential.user
       } catch (e) {

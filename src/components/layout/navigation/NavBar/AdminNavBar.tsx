@@ -23,7 +23,7 @@ const StyledUl = styled.ul`
 
   @media (max-width: 900px) {
     align-items: center;
-    padding: 10px 0;
+    padding-bottom: 20px;
     flex-direction: row;
     overflow: auto;
     scrollbar-width: thin;
@@ -40,18 +40,43 @@ const StyledUl = styled.ul`
     }
   }
 `
+
+export const StlyedNavLink = styled(NavLink)`
+    display: block;
+    font-size: clamp(1.4rem, 2.5vw, 1.5rem);
+    width: fit-content;
+    transition: all 0.2s;
+    line-height: 1;
+    &::after {
+        content: '';
+        display: block;
+        width: 0;
+        border-bottom: 2px solid var(--color-secondary);
+        transition: all 0.2s;
+    }
+    &.active::after {
+        content: '';
+        display: block;
+        width: 100%;
+        border-bottom: 2px solid var(--color-secondary);
+        border-radius: unset;
+    }
+    &.active {
+        color: var(--color-secondary);
+    }
+`
 function AdminNavBar() {
   return (
     <StyledNav>
       <StyledUl>
         <li>
-          <NavLink to='/admin/createNews'>Статьи</NavLink>
+          <StlyedNavLink to='/admin/createNews'>Статьи</StlyedNavLink>
         </li>
         <li>
-          <NavLink to='/admin/usersControl'>Пользователи</NavLink>
+          <StlyedNavLink to='/admin/usersControl'>Пользователи</StlyedNavLink>
         </li>
         <li>
-          <NavLink to='/admin/categorys'>Категории</NavLink>
+          <StlyedNavLink to='/admin/categorys'>Категории</StlyedNavLink>
         </li>
       </StyledUl>
     </StyledNav>

@@ -24,9 +24,8 @@ const StyledSection = styled.section`
 function AdminPanel() {
   const user = useSelector((state: IUserState) => state.user.value)
 
-  console.log(user)
   if (user === undefined) return <LoadingSpinner />
-  if (!user || !user.userRoles.includes('admin')) return <ErrorPage errorCode={'403 - отказано в доступе'} />
+  if (!user || !user.userRoles || !user.userRoles.includes('admin')) return <ErrorPage errorCode={'403 - отказано в доступе'} />
 
   return (
     <StyledDivWrapper>

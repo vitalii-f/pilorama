@@ -54,6 +54,10 @@ const StyledLi = styled.li`
 
   border: 2px solid white;
   border-radius: 20px;
+
+  @media (max-width: 425px) {
+    width: 100%;
+  }
 `
 
 const StyledDeleteButton = styled.button`

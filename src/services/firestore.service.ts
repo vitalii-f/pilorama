@@ -25,6 +25,9 @@ let lastFilteredDoc: QueryDocumentSnapshot | string = ''
 let lastFilteredIndex: number = 0
 let lastFilteredCategory: string = ''
 
+let lastDoc: QueryDocumentSnapshot | string = ''
+let lastStartIndex: number = 0
+
 export const FirestoreService = {
   async addArticle(article: ICreatedArticle) {
     const data: ICreatedArticle = {
@@ -54,23 +57,36 @@ export const FirestoreService = {
     }
   },
   async getArticles(lim = 1, startIndex = 0): Promise<INews> {
+    const response: IGetedArticle[] = []
+
     const coll = collection(db, 'news_articles')
     const dataCount = (await getCountFromServer(coll)).data().count
-    const currentIndex = dataCount - startIndex - 1
-    const dbQuery = query(
-      coll,
-      orderBy('id', 'desc'),
-      where('id', '<=', currentIndex),
-      limit(lim)
-    )
-    const querySnapshot = await getDocs(dbQuery)
 
-    const response: IGetedArticle[] = []
-    querySnapshot.forEach((doc) => {
-      const data = doc.data() as IGetedArticle
-      response.push(data)
-    })
+    const dbQuery =
+      startIndex >= lastStartIndex
+        ? query(coll, orderBy('id', 'desc'), startAfter(lastDoc), limit(lim))
+        : query(coll, orderBy('id', 'desc'), endBefore(lastDoc), limit(lim))
 
+    
+
+    if (startIndex !== lastStartIndex) {
+      lastFilteredIndex = 0
+      lastDoc = ''
+    }
+
+    try {
+      const querySnapshot = await getDocs(dbQuery)
+      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
+      lastStartIndex = startIndex
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as IGetedArticle
+        response.push(data)
+      })
+
+    } catch (e) {
+      console.warn(e)
+    }
     return { news: response, newsCount: dataCount }
   },
   async getFilteredArticles(lim = 1, startIndex = 0, category: string) {
@@ -144,9 +160,22 @@ export const FirestoreService = {
       email: email,
       role: role,
       creationDate: new Date(),
+      id: 0,
     }
     try {
-      await setDoc(doc(db, 'users', email), data)
+      //geting last ID
+      const coll = collection(db, 'users')
+      const dbQuery = query(coll, orderBy('creationDate', 'desc'), limit(1))
+      const querySnapshot = await getDocs(dbQuery)
+
+      if (querySnapshot.docs.length > 0) {
+        const id = +querySnapshot.docs[0].data().id + 1
+        data.id = id
+        await setDoc(doc(db, 'users', email), data)
+      } else {
+        data.id = 0
+        await setDoc(doc(db, 'users', email), data)
+      }
     } catch (e) {
       console.error(e)
     }
