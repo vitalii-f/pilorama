@@ -1,28 +1,33 @@
-import { User } from "firebase/auth"
-import { Timestamp } from "firebase/firestore"
+import { User } from "@supabase/supabase-js"
 
-export interface UserProps {
-  userData: User | null
-  userRoles: TUserRoles
+// export interface UserProps {
+//   user: User | null | undefined
+// }
+
+export interface UserSliceState {
+  user: User | null
+  status: UserStatus
 }
 
-export interface IUserState {
-  user: {
-    value: UserProps
-  }
+export interface UserSelectorProps {
+  state: UserSliceState
 }
 
-export type IUserDB = IUser[]
-
-export interface IUser {
-  creationDate: Date | Timestamp
-  email: string
-  id: number
-  role: TUserRoles
-  userID: string
+export enum UserStatus {
+  loading = 'loading',
+  loaded = 'loaded',
+  reject = 'reject'
 }
 
-export type TUserRoles = string[]
+// export type UserDB = UserProps[]
+
+// export interface CreateUserProps {
+//   creationDate: Date
+//   email: string
+//   id: number
+//   role: string[]
+//   userID: string
+// }
 
 export interface UpdateProfileProps {
   displayName?: string
@@ -31,12 +36,12 @@ export interface UpdateProfileProps {
   photo?: Blob
 }
 
-export interface IUserLogInData {
+export interface UserLogInData {
   email: string
   password: string
 }
 
-export interface IUserSignUpData {
+export interface UserSignUpData {
   email: string
   password: string
   login: string

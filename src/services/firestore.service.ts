@@ -66,19 +66,18 @@ export const FirestoreService = {
       startIndex >= lastStartIndex
         ? query(coll, orderBy('id', 'desc'), startAfter(lastDoc), limit(lim))
         : query(coll, orderBy('id', 'desc'), endBefore(lastDoc), limit(lim))
-
+    const querySnapshot = await getDocs(dbQuery)
     
-
-    if (startIndex !== lastStartIndex) {
-      lastFilteredIndex = 0
+    if (startIndex !== lastStartIndex)  {
+      lastStartIndex = 0
       lastDoc = ''
     }
 
     try {
-      const querySnapshot = await getDocs(dbQuery)
+      // const querySnapshot = await getDocs(dbQuery)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
       lastStartIndex = startIndex
-      
+
       querySnapshot.forEach((doc) => {
         const data = doc.data() as IGetedArticle
         response.push(data)

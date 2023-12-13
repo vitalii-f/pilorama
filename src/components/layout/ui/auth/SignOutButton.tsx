@@ -1,4 +1,4 @@
-import { FirebaseAuthService } from '@/services/firebaseAuth.service'
+import { AuthService } from '@/services/auth.service'
 import { useAppDispatch } from '@/store/store'
 import { signOutUser } from '@/store/user/userSlice'
 import styled from 'styled-components'
@@ -7,7 +7,7 @@ const StyledButton = styled.button`
   color: var(--color-red-delete);
   text-align: start;
 
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(1.4rem, 2.5vw, 1.5rem);
   transition: all 0.2s;
   &.active::after {
     content: '';
@@ -27,7 +27,7 @@ function SignOutButton() {
     <>
       <StyledButton
         onClick={() => {
-          FirebaseAuthService.signOutUser()
+          AuthService.signOutUser()
           dispatch(signOutUser())
         }}
       >

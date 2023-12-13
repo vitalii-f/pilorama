@@ -1,12 +1,11 @@
-import { FirebaseAuthService } from '@/services/firebaseAuth.service'
 import { setUser } from '@/store/user/userSlice'
 import { useAppDispatch } from '@/store/store'
-import { IUserLogInData } from '@/utils/interfaces/user.interfaces'
+import { UserLogInData } from '@/utils/interfaces/user.interfaces'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { AuthErrorCode } from '@/utils/enums/auth.enum'
 import { useState } from 'react'
 import { StyledErrorParagraph, StyledForm, StyledInput } from './AuthStyle'
+import { AuthService } from '@/services/auth.service'
 
 const LogInSchema = Yup.object().shape({
   email: Yup.string().email('Неверный Email').required('Обязательное поле'),
@@ -20,20 +19,15 @@ function LogIn() {
   const [errorCode, setErrorCode] = useState<string>('')
   const dispatch = useAppDispatch()
 
-  const formik = useFormik<IUserLogInData>({
+  const formik = useFormik<UserLogInData>({
     initialValues: {
       email: '',
       password: '',
     },
     validationSchema: LogInSchema,
     onSubmit: async (value) => {
-      const auth = await FirebaseAuthService.authUser(
-        value.email,
-        value.password
-      )
-      if (typeof auth === 'string') {
-        setErrorCode(AuthErrorCode[auth as keyof typeof AuthErrorCode])
-      } else if (auth) dispatch(setUser())
+      const response = await AuthService.logInUser(value.email, value.password) //return only error
+      response ? setErrorCode(response) : dispatch(setUser())
     },
   })
 

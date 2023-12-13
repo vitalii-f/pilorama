@@ -90,7 +90,6 @@ const Сategories = () => {
       return errors
     },
     onSubmit: (values) => {
-      console.log(values)
       formik.resetForm()
       formik.setSubmitting(false)
       mutateCreateCategory(values)

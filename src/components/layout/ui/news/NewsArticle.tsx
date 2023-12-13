@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import ArticleOptionsMenu from './ArticleOptionsMenu'
-import { IGetedArticle } from '@/utils/interfaces/article.interfaces'
+import { Tables } from '@/utils/interfaces/Supabase.interfaces'
 
 const StyledArticle = styled.div`
   display: flex;
@@ -29,17 +29,17 @@ const StyledImg = styled.img`
 `
 
 interface NewsArticleProps {
-  article: IGetedArticle
+  article: Tables<'news_articles'>
   haveAccess: boolean
 }
 
-interface iElementVisibility {
+interface ElementVisibilityProps {
   id: number | null
   togled: boolean
 }
 
 const NewsArticle = ({ article, haveAccess }: NewsArticleProps) => {
-  const [elementVisibility, setElementVisibility] = useState<iElementVisibility>({
+  const [elementVisibility, setElementVisibility] = useState<ElementVisibilityProps>({
     id: null,
     togled: false,
   })
@@ -72,11 +72,11 @@ const NewsArticle = ({ article, haveAccess }: NewsArticleProps) => {
         </div>
         <div className='flex justify-between'>
           <span className='mt-2 text-xs'>
-            {article.creation_date.toDate().toLocaleDateString()}
+            {/* {article.creation_date} */}
           </span>
           <div className='flex gap-3'>
-            {article.category &&
-              article.category.map((category) => (
+            {article.categories &&
+              article.categories.map((category) => (
                 <span key={category} className='mt-2 text-xs'>
                   {category}
                 </span>

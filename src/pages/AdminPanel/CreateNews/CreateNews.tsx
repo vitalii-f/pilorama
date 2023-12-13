@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { Alert } from '@mui/material'
 import { useState } from 'react'
 import SunEditor from 'suneditor-react'
-import { StorageService } from '@/services/storage.service'
 import { FirestoreService } from '@/services/firestore.service'
 import { AlertProps, ICategory } from '@/utils/interfaces/interfaces'
 import { CategoriesOptions, ICreatedArticle } from '@/utils/interfaces/article.interfaces'
@@ -10,6 +9,7 @@ import styled from 'styled-components'
 import 'suneditor/dist/css/suneditor.min.css'
 import AsyncSelect from 'react-select/async'
 import { FormikErrors, useFormik } from 'formik'
+import { DatabaseService } from '@/services/database.service'
 
 //TODO Правильно выставить reset()
 
@@ -58,16 +58,15 @@ function CreateNews() {
   const { mutate } = useMutation({
     mutationKey: ['add article'],
     mutationFn: async (data: ICreatedArticle) => {
-      console.log('data')
-      console.log(data.imgURL)
-      await StorageService.uploadNewsPreview(
-        data.imgURL[0],
-        'news_preview_' + data.title
-      )
-      data.imgURL = await StorageService.downloadNewsPreview(
-        'news_preview_' + data.title
-      )
-      await FirestoreService.addArticle(data)
+      // await StorageService.uploadNewsPreview(
+      //   data.imgURL[0],
+      //   'news_preview_' + data.title
+      // )
+      // data.imgURL = await StorageService.downloadNewsPreview(
+      //   'news_preview_' + data.title
+      // )
+      data.imgURL = 'Supabse'
+      await DatabaseService.addArticle(data)
     },
     onSuccess: () => {
       setAlert({ type: 'success', message: 'Пост успешно опубликован!' })

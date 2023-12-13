@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import NewsArticle from './NewsArticle'
 import NewsPagination from './NewsPagination'
-import { FirestoreService } from '@/services/firestore.service'
-import { IUserState } from '@/utils/interfaces/user.interfaces'
-import { IGetedArticle, INews } from '@/utils/interfaces/article.interfaces'
 import LoadingSpinner from '../loading/LoadingSpinner'
 import styled from 'styled-components'
 import NewsCategories from './NewsCategories'
 import ErrorPage from '@/pages/ErrorPage/ErrorPage'
+import { RootState } from '@/store/store'
+import { NewsProps } from '@/utils/interfaces/article.interfaces'
+import { DatabaseService } from '@/services/database.service'
 
 const StyledNewsFeedSection = styled.section`
   max-width: 1280px;
@@ -21,11 +21,11 @@ const StyledNewsFeedSection = styled.section`
 `
 
 function NewsFeed() {
-  const user = useSelector((state: IUserState) => state.user.value)
+  const user = useSelector((state: RootState) => state.userSlice.user)
 
   const [haveAccess, setHaveAccess] = useState<boolean>(false)
   useEffect(() => {
-    if (user && user.userRoles) setHaveAccess(user?.userRoles.includes('admin'))
+    if (user && user.role) setHaveAccess(user?.role.includes('admin'))
   }, [user])
 
   const [itemsPerPage, setItemsPerPage] = useState<number>(2)
@@ -33,31 +33,31 @@ function NewsFeed() {
 
   const [filterCategory, setFilterCategory] = useState<string>('')
 
-  const { data, isLoading, isError, refetch, error } = useQuery<INews>({
+  const { data, isLoading, isError, refetch, error } = useQuery<NewsProps>({
     queryKey: ['articles', currentPage, itemsPerPage, filterCategory],
     queryFn: async () => {
       if (filterCategory.length) {
-        return await FirestoreService.getFilteredArticles(
+        return await DatabaseService.getFilteredArticles(
           itemsPerPage,
           currentPage * itemsPerPage,
           filterCategory
         )
       } else {
-        return await FirestoreService.getArticles(
+        return await DatabaseService.getArticles(
           itemsPerPage,
           currentPage * itemsPerPage
         )
       }
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   })
 
   if (isError) return <ErrorPage errorCode={error.message} />
   if (isLoading) return <LoadingSpinner />
   if (!data) return <LoadingSpinner />
 
-  const currentItems: IGetedArticle[] = data.news
-  const pageCount: number = Math.ceil(data.newsCount / itemsPerPage)
+  const currentItems = data.news
+  const pageCount = data.newsCount && Math.ceil(data.newsCount / itemsPerPage)
 
   return (
     <StyledNewsFeedSection>
@@ -67,7 +67,7 @@ function NewsFeed() {
         setCurrentPage={setCurrentPage}
         refetch={refetch}
       />
-      {currentItems.length ? (
+      {pageCount && currentItems && currentItems.length ? (
         <>
           {currentItems.map((article) => (
             <NewsArticle

@@ -1,13 +1,11 @@
-import { FirebaseAuthService } from '@/services/firebaseAuth.service'
-import { FirestoreService } from '@/services/firestore.service'
 import { useAppDispatch } from '@/store/store'
 import { setUser } from '@/store/user/userSlice'
-import { IUserSignUpData } from '@/utils/interfaces/user.interfaces'
+import { UserSignUpData } from '@/utils/interfaces/user.interfaces'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { StyledErrorParagraph, StyledForm, StyledInput } from './AuthStyle'
 import { useState } from 'react'
-import { AuthErrorCode } from '@/utils/enums/auth.enum'
+import { AuthService } from '@/services/auth.service'
 
 const SignUpSchema = Yup.object().shape({
   email: Yup.string().email('Неверный Email').required('Обязательное поле'),
@@ -26,7 +24,7 @@ function SignUp() {
 
   const dispatch = useAppDispatch()
 
-  const formik = useFormik<IUserSignUpData>({
+  const formik = useFormik<UserSignUpData>({
     initialValues: {
       login: '',
       email: '',
@@ -34,22 +32,8 @@ function SignUp() {
     },
     validationSchema: SignUpSchema,
     onSubmit: async (data) => {
-      const currentUser = await FirebaseAuthService.createUser(
-        data.email,
-        data.password,
-        data.login
-      )
-      if (typeof currentUser === 'string') {
-        setErrorCode(AuthErrorCode[currentUser as keyof typeof AuthErrorCode])
-      } else if (currentUser) {
-        await FirestoreService.addRole(
-          currentUser.uid,
-          ['default'],
-          data.email,
-          data.login
-        )
-        dispatch(setUser())
-      }
+      const response = await AuthService.registerUser(data.login, data.email, data.password) //return only error
+      response ? setErrorCode(response) : dispatch(setUser())
     },
   })
 

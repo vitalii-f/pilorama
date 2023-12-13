@@ -4,13 +4,13 @@ import { useDispatch } from 'react-redux'
 
 const store = configureStore({
   reducer: {
-    user: userReducer,
+    userSlice: userReducer,
   },
-  devTools: true,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck : false
-    })
+  // devTools: true,
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware({
+  //     serializableCheck: false,
+  //   }),
 })
 
 export type RootState = ReturnType<typeof store.getState>

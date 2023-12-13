@@ -1,31 +1,32 @@
-import { FirebaseAuthService } from "@/services/firebaseAuth.service";
-import { FirestoreService } from "@/services/firestore.service";
-import { TUserRoles } from "@/utils/interfaces/user.interfaces";
+import { UserSliceState, UserStatus } from "@/utils/interfaces/user.interfaces";
+import { supabase } from "@/utils/supabase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { User } from "firebase/auth";
 
-interface UserState {
-  value: {
-    userData: User | null
-    userRoles: TUserRoles | null 
-  } | null | undefined
+const initialState: UserSliceState = {
+  user: null,
+  status: UserStatus.loading
 }
-
-const initialState = {
-  value: undefined
-} as UserState
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
     signOutUser: (state) => {
-        state.value = null
+        state.user = null
     }
   },
   extraReducers: (builder) => {
+    builder.addCase(setUser.pending, (state) => {
+      state.user = null
+      state.status = UserStatus.loading
+    }),
     builder.addCase(setUser.fulfilled, (state, { payload }) => {
-      state.value = payload
+      state.user = payload
+      state.status = UserStatus.loaded
+    }),
+    builder.addCase(setUser.rejected, (state) => {
+      state.user = null
+      state.status = UserStatus.reject
     })
   }
 })
@@ -33,9 +34,17 @@ export const userSlice = createSlice({
 export const setUser = createAsyncThunk(
   'user/setUser',
   async () => {
-    const userData: User | null = FirebaseAuthService.userState()
-    const userRoles: TUserRoles | null = userData && userData.email !== null ? await FirestoreService.getRole(userData.email) : null
-    return {userData, userRoles}
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data } = await supabase.from('profiles').select('role')
+
+    return {...user, role: data && data[0].role}
+  }
+)
+
+export const getUserRole = createAsyncThunk(
+  'user/getUserRole',
+  async () => {
+    const role = await supabase.from('profiles').select()
   }
 )
 

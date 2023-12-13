@@ -6,12 +6,10 @@ interface ErrorPageProps {
 
 const ErrorPage = ({ errorCode }: ErrorPageProps) => {
   return (
-    <>
-        <Alert severity="error" className='mx-auto mt-10'>
-            <AlertTitle>Ошибка {errorCode}</AlertTitle>
-            This is an error alert — <strong>check it out!</strong>
-        </Alert>
-    </>
+    <Alert severity='error' className='mx-auto mt-10'>
+      <AlertTitle>Ошибка {errorCode}</AlertTitle>
+      This is an error alert — <strong>check it out!</strong>
+    </Alert>
   )
 }
 

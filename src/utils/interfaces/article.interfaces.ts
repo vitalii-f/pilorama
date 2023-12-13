@@ -1,31 +1,21 @@
-import { Timestamp } from 'firebase/firestore'
+import { Tables } from "./Supabase.interfaces"
 
-export interface INews {
-  news: IGetedArticle[]
-  newsCount: number
-}
-
-export interface ICreatedArticle {
-  author: string | null | undefined
-  category: string[] | CategoriesOptions
-  creation_date: Date
-  id?: number
-  imgURL: any
-  text: string
-  title: string
-}
-
-export interface IGetedArticle {
-  author: string | null | undefined
-  category: string[]
-  creation_date: Timestamp
-  id: number
-  imgURL: any
-  text: string
-  title: string
+export interface NewsProps {
+  news: Tables<'news_articles'>[] | null
+  newsCount: number | null
 }
 
 export interface CategoriesOptions {
   value: string
   label: string
+}
+
+export interface ArticleProps {
+  author: string
+  categories: string[]
+  creation_date: string
+  id: number
+  imgURL: string
+  text: string
+  title: string
 }

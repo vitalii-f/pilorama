@@ -1,6 +1,6 @@
 import LogIn from '@/components/layout/ui/auth/LogIn'
 import LoadingSpinner from '@/components/layout/ui/loading/LoadingSpinner'
-import { IUserState } from '@/utils/interfaces/user.interfaces'
+import { RootState } from '@/store/store'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -15,14 +15,14 @@ const StyledLink = styled(Link)`
 `
 
 function LoginPage() {
-  const user = useSelector((state: IUserState) => state.user.value)
+  const userData = useSelector((state: RootState) => state.userSlice)
   
-  if (user === undefined) return <LoadingSpinner />
+  if (userData.status === 'loading') return <LoadingSpinner />
   
   return (
     <section className='w-full'>
       <StyledDiv>
-        {user && user.userData ? (
+        {userData.user ? (
           <h2 className='w-full text-3xl text-center'>Авторизация успешна!</h2>
         ) : (
           <>

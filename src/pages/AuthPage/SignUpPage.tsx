@@ -1,6 +1,6 @@
 import SignUp from '@/components/layout/ui/auth/SignUp'
 import LoadingSpinner from '@/components/layout/ui/loading/LoadingSpinner'
-import { IUserState } from '@/utils/interfaces/user.interfaces'
+import { RootState } from '@/store/store'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -14,20 +14,22 @@ const StyledLink = styled(Link)`
 `
 
 function SignUpPage() {
-  const user = useSelector((state: IUserState) => state.user.value)
+  const userData = useSelector((state: RootState) => state.userSlice)
 
-  if (user === undefined) return <LoadingSpinner />
+  if (userData.status === 'loading') return <LoadingSpinner />
 
   return (
     <section className='w-full'>
       <StyledDiv>
-        {user && user.userData ? (
+        {userData.user ? (
           <h2 className='w-full text-3xl text-center'>Регистрация успешна!</h2>
         ) : (
           <>
             <SignUp />
             <p className='mt-4'>Есть учётная запись?</p>
-            <p><StyledLink to='/login'>Войти в учётную запись</StyledLink></p>
+            <p>
+              <StyledLink to='/login'>Войти в учётную запись</StyledLink>
+            </p>
           </>
         )}
       </StyledDiv>

@@ -1,8 +1,8 @@
 import { AlertProps } from '@/utils/interfaces/interfaces'
 import { useMutation } from '@tanstack/react-query'
-import { User } from 'firebase/auth'
 import { UpdateProfileProps } from '@/utils/interfaces/user.interfaces'
 import { useFormik } from 'formik'
+import { User } from '@supabase/supabase-js'
 
 //TODO Сделать полноценное изменение данных: пароль, почта, логин, фото(сделано)
 

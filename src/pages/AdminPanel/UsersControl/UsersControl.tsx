@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 import { DataGrid } from '@mui/x-data-grid'
 import { ThemeProvider } from "styled-components";
-import { FirestoreService } from "@/services/firestore.service";
 import { theme } from "@/utils/constants/theme";
+import { DatabaseService } from "@/services/database.service";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -16,7 +16,7 @@ function UsersControl() {
   const { data, isLoading, error } = useQuery(
     {
       queryKey: ['get Users'],
-      queryFn: () => FirestoreService.getUsers()
+      queryFn: () => DatabaseService.getAllUsers()
     }
   )
   if (isLoading) return <h2> Loading... </h2>
