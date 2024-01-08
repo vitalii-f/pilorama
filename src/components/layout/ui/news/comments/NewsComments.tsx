@@ -1,6 +1,6 @@
 import { DatabaseService } from '@/services/database.service'
-import { TablesInsert, TablesRow } from '@/utils/interfaces/Supabase.interfaces'
-import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { TablesInsert } from '@/utils/interfaces/Supabase.interfaces'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { FormikErrors, useFormik } from 'formik'
 import {
   StyledAvatar,

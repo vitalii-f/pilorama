@@ -12,10 +12,14 @@ export const StyledSection = styled.section`
 export const StyledWrapper = styled.div`
   display: flex;
   gap: 20px;
+  @media (max-width: 550px) {
+    flex-direction: column;
+  }
 `
 
 export const StyledAvatar = styled.img`
   width: 250px;
+  object-fit: cover;
 `
 
 export const StyledProfile = styled.div`
