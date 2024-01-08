@@ -2,8 +2,8 @@ import { DatabaseService } from '@/services/database.service'
 import { RootState } from '@/store/store'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
-
-//TODO rewrite styles with styled component
+import { useNavigate } from 'react-router-dom'
+import { StyledUl, StyledLi } from './ArticleOptionsMenu.styled'
 
 interface ArticleOptionsMenuProps {
   id: number
@@ -11,26 +11,31 @@ interface ArticleOptionsMenuProps {
 
 const ArticleOptionsMenu = ({ id }: ArticleOptionsMenuProps) => {
   const queryClient = useQueryClient()
-  const user = useSelector((state: RootState) => state.userSlice.user)
+  const userData = useSelector((state: RootState) => state.userSlice)
+  const navigate = useNavigate()
 
   const { mutate } = useMutation({
     mutationKey: ['remove article'],
     mutationFn: async (id: number) => {
-      if (user?.role?.includes('admin')) await DatabaseService.deleteArticle(id)
+      if (userData.role?.includes('admin')) await DatabaseService.deleteArticle(id)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['articles'] })
     },
   })
 
+  const redirectToEdit = () => {
+    if (userData.role?.includes('admin')) navigate(`/edit/${id}`)
+  }
+
   return (
     <div>
-      <ul className='absolute z-10 flex flex-col visible p-2 gap-y-1 bg-stone-800'>
-        <li className='cursor-pointer'>Редактировать</li>
-        <li className='text-red-500 cursor-pointer' onClick={() => mutate(id)}>
+      <StyledUl>
+        <StyledLi onClick={redirectToEdit}>Редактировать</StyledLi>
+        <StyledLi type='delete' onClick={() => mutate(id)}>
           Удалить
-        </li>
-      </ul>
+        </StyledLi>
+      </StyledUl>
     </div>
   )
 }

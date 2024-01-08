@@ -1,11 +1,8 @@
 import { User } from "@supabase/supabase-js"
 
-// export interface UserProps {
-//   user: User | null | undefined
-// }
-
 export interface UserSliceState {
   user: User | null
+  role: string[] | null
   status: UserStatus
 }
 
@@ -19,21 +16,11 @@ export enum UserStatus {
   reject = 'reject'
 }
 
-// export type UserDB = UserProps[]
-
-// export interface CreateUserProps {
-//   creationDate: Date
-//   email: string
-//   id: number
-//   role: string[]
-//   userID: string
-// }
-
 export interface UpdateProfileProps {
   displayName?: string
   email?: string
   password?: string
-  photo?: Blob
+  avatar?: Blob | null
 }
 
 export interface UserLogInData {

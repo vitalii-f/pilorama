@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 import NewsArticle from './NewsArticle'
@@ -21,55 +21,57 @@ const StyledNewsFeedSection = styled.section`
 `
 
 function NewsFeed() {
-  const user = useSelector((state: RootState) => state.userSlice.user)
+  const userData = useSelector((state: RootState) => state.userSlice)
 
   const [haveAccess, setHaveAccess] = useState<boolean>(false)
   useEffect(() => {
-    if (user && user.role) setHaveAccess(user?.role.includes('admin'))
-  }, [user])
+    if (userData && userData.role)
+      setHaveAccess(userData.role.includes('admin'))
+  }, [userData])
 
   const [itemsPerPage, setItemsPerPage] = useState<number>(2)
   const [currentPage, setCurrentPage] = useState<number>(0)
 
   const [filterCategory, setFilterCategory] = useState<string>('')
 
-  const { data, isLoading, isError, refetch, error } = useQuery<NewsProps>({
+  const { data, isError, refetch, error } = useQuery<NewsProps>({
     queryKey: ['articles', currentPage, itemsPerPage, filterCategory],
     queryFn: async () => {
       if (filterCategory.length) {
         return await DatabaseService.getFilteredArticles(
-          itemsPerPage,
-          currentPage * itemsPerPage,
+          currentPage,
+          currentPage * itemsPerPage + itemsPerPage - 1,
           filterCategory
         )
       } else {
         return await DatabaseService.getArticles(
-          itemsPerPage,
-          currentPage * itemsPerPage
+          currentPage * itemsPerPage,
+          currentPage * itemsPerPage + itemsPerPage - 1
         )
       }
     },
     refetchOnWindowFocus: false,
   })
 
-  if (isError) return <ErrorPage errorCode={error.message} />
-  if (isLoading) return <LoadingSpinner />
-  if (!data) return <LoadingSpinner />
-
-  const currentItems = data.news
-  const pageCount = data.newsCount && Math.ceil(data.newsCount / itemsPerPage)
-
-  return (
-    <StyledNewsFeedSection>
+  const renderNewsCategories = useMemo(() => {
+    return (
       <NewsCategories
         filterCategory={filterCategory}
         setFilterCategory={setFilterCategory}
         setCurrentPage={setCurrentPage}
         refetch={refetch}
       />
-      {pageCount && currentItems && currentItems.length ? (
+    )
+  }, [filterCategory])
+
+  if (isError) return <ErrorPage errorCode={error.message} />
+
+  return (
+    <StyledNewsFeedSection>
+      {renderNewsCategories}
+      {data && data.news && data.newsCount ? (
         <>
-          {currentItems.map((article) => (
+          {data.news.map((article) => (
             <NewsArticle
               article={article}
               haveAccess={haveAccess}
@@ -81,11 +83,11 @@ function NewsFeed() {
             setItemsPerPage={setItemsPerPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            pageCount={pageCount}
+            pageCount={Math.ceil(data.newsCount / itemsPerPage)}
           />
         </>
       ) : (
-        <h2>No Articles</h2>
+        <LoadingSpinner />
       )}
     </StyledNewsFeedSection>
   )

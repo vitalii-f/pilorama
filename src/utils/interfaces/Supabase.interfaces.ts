@@ -13,14 +13,61 @@ export interface Database {
         Row: {
           id: number
           name: string
+          value: string
         }
         Insert: {
           id?: number
           name: string
+          value: string
         }
         Update: {
           id?: number
           name?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_value_fkey"
+            columns: ["value"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["name"]
+          }
+        ]
+      }
+      comments: {
+        Row: {
+          article_id: number
+          author_id: string
+          created_at: string
+          disliked_by: string[]
+          dislikes: number
+          id: number
+          liked_by: string[]
+          likes: number
+          text: string
+        }
+        Insert: {
+          article_id: number
+          author_id?: string
+          created_at?: string
+          disliked_by?: string[]
+          dislikes?: number
+          id?: number
+          liked_by?: string[]
+          likes?: number
+          text: string
+        }
+        Update: {
+          article_id?: number
+          author_id?: string
+          created_at?: string
+          disliked_by?: string[]
+          dislikes?: number
+          id?: number
+          liked_by?: string[]
+          likes?: number
+          text?: string
         }
         Relationships: []
       }
@@ -55,7 +102,7 @@ export interface Database {
           author?: string
           author_id?: string | null
           categories: string[]
-          creation_date: string
+          creation_date?: string
           id?: number
           imgURL: string
           text: string
@@ -77,18 +124,21 @@ export interface Database {
       }
       profiles: {
         Row: {
+          avatar: string
           email: string
           id: string
           login: string
           role: string[]
         }
         Insert: {
+          avatar?: string
           email: string
           id: string
           login: string
           role?: string[]
         }
         Update: {
+          avatar?: string
           email?: string
           id?: string
           login?: string
@@ -109,7 +159,20 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      dislike_comment: {
+        Args: {
+          user_id: string
+          comment_id: number
+        }
+        Returns: string
+      }
+      like_comment: {
+        Args: {
+          comment_id: number
+          user_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

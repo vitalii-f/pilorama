@@ -10,6 +10,7 @@ import Profile from "@/pages/UserProfile/Profile";
 import UsersControl from "@/pages/AdminPanel/UsersControl/UsersControl";
 import Header from "../header/Header";
 import Categorys from "@/pages/AdminPanel/Categories/Сategories";
+import EditArticlePage from "@/pages/Articles/EditArticlePage";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
     
           <Route path="/articles" element={<ArticlesPage />}/>
           <Route path="/articles/:id" element={<NewsArticleDetail />} />
+          <Route path="/edit/:id" element={<EditArticlePage />} />
 
           <Route path="/login" element={<LoginPage />}/>
           <Route path="/signup" element={<SignUpPage />}/>

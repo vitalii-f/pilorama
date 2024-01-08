@@ -21,6 +21,9 @@ export const StyledText = styled.div`
 
 export const StyledImg = styled.img`
   margin: 0 auto;
+  
+  width: 100%;
+  max-width: 700px;
 `
 
 export const StyledArticleFooter = styled.div`

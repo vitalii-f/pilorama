@@ -18,9 +18,8 @@ const NewsCategories = ({
 }: NewsCategoryProps) => {
   const { data, isSuccess } = useQuery({
     queryKey: ['category'],
-    queryFn: async () => await DatabaseService.getСategoriesList(),
+    queryFn: async () => await DatabaseService.getCategoriesList(),
   })
-
   const renderCategoriesList = () => {
     if (isSuccess && data) {
       return (

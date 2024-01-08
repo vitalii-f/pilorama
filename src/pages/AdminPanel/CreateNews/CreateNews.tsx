@@ -2,73 +2,47 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { Alert } from '@mui/material'
 import { useState } from 'react'
 import SunEditor from 'suneditor-react'
-import { FirestoreService } from '@/services/firestore.service'
-import { AlertProps, ICategory } from '@/utils/interfaces/interfaces'
-import { CategoriesOptions, ICreatedArticle } from '@/utils/interfaces/article.interfaces'
-import styled from 'styled-components'
+import { AlertProps } from '@/utils/interfaces/interfaces'
 import 'suneditor/dist/css/suneditor.min.css'
 import AsyncSelect from 'react-select/async'
 import { FormikErrors, useFormik } from 'formik'
 import { DatabaseService } from '@/services/database.service'
-
-//TODO Правильно выставить reset()
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  padding: 0 10px;
-  flex-shrink: 2;
-`
-
-const StyledFileInput = styled.input`
-  width: 260px;
-`
+import { Tables, TablesInsert } from '@/utils/interfaces/Supabase.interfaces'
+import { StyledFileInput, StyledForm } from './CreateNews.styled'
+import { showAlert } from '@/utils/alert/ShowAlert'
+import { defaultEditorOptions, defaultEditorStyle } from '@/utils/constants/textEditor.sonstants'
 
 function CreateNews() {
-  const [alert, setAlert] = useState<AlertProps>({
-    type: 'none',
-    message: '',
-  })
+  const [alert, setAlert] = useState<AlertProps | null>(null)
 
-  const formik = useFormik<ICreatedArticle>({
+  const formik = useFormik<TablesInsert<'news_articles'>>({
     initialValues: {
-      author: '',
-      category: ['uncategory'],
-      creation_date: new Date(),
+      categories: [],
       imgURL: '',
       text: '',
       title: '',
     },
     validate: (values) => {
-      const errors: FormikErrors<ICreatedArticle> = {}
+      const errors: FormikErrors<TablesInsert<'news_articles'>> = {}
       if (values.title.length < 5) errors.title = 'Минимум 5 символов'
       if (values.text.length < 5) errors.text = 'Минимум 50 символов'
 
       return errors
     },
     onSubmit: (values) => {
-      console.log(values)
       mutate(values)
-      formik.resetForm()
     },
     validateOnChange: false,
   })
 
   const { mutate } = useMutation({
     mutationKey: ['add article'],
-    mutationFn: async (data: ICreatedArticle) => {
-      // await StorageService.uploadNewsPreview(
-      //   data.imgURL[0],
-      //   'news_preview_' + data.title
-      // )
-      // data.imgURL = await StorageService.downloadNewsPreview(
-      //   'news_preview_' + data.title
-      // )
-      data.imgURL = 'Supabse'
-      await DatabaseService.addArticle(data)
+    mutationFn: async (data: TablesInsert<'news_articles'>) => {
+      data.imgURL = await DatabaseService.uploadArticlePreview(data.imgURL[0], data.title)
+      return await DatabaseService.addArticle(data)
     },
     onSuccess: () => {
+      formik.resetForm()
       setAlert({ type: 'success', message: 'Пост успешно опубликован!' })
     },
     onError: (error) => {
@@ -76,48 +50,32 @@ function CreateNews() {
     },
   })
 
-  function showAlert(type: string, message: string) {
-    if (type === 'success')
-      return (
-        <Alert
-          onClose={() => setAlert({ type: 'none', message: '' })}
-          severity='success'
-        >
-          {message}
-        </Alert>
-      )
-    if (type === 'error')
-      return (
-        <Alert
-          onClose={() => setAlert({ type: 'none', message: '' })}
-          severity='error'
-        >
-          {message}
-        </Alert>
-      )
-  }
-
-  const { data, isSuccess } = useQuery<ICategory[]>({
+  const { data, isSuccess } = useQuery<Tables<'categories'>[] | null>({
     queryKey: ['get categories'],
-    queryFn: () => FirestoreService.getСategoriesList(),
+    queryFn: () => DatabaseService.getCategoriesList(),
   })
 
-  const loadOptions = (): Promise<CategoriesOptions[]> | undefined => {
-    if (isSuccess) {
-      const localOptions: CategoriesOptions[] = data.map((item: ICategory) => {
+  const loadOptions = (): Promise<{value: string, label: string}[]> | undefined => {
+    if (isSuccess && data) {
+      const localOptions = data.map((item: Tables<'categories'>) => {
         return { value: item.name, label: item.name }
       })
       return new Promise((resolve) => resolve(localOptions))
     } else return
   }
 
+  const getSelectValue = formik.values.categories.map((item) => {
+    return {value: item, label: item}
+  })
+
   return (
     <>
-      {showAlert(alert.type, alert.message)}
+      {alert && showAlert(alert.type, alert.message, setAlert)}
       <StyledForm onSubmit={formik.handleSubmit}>
         <input
           name='title'
           onChange={formik.handleChange}
+          value={formik.values.title}
           className='p-2'
           placeholder='Заголовок'
           type='text'
@@ -127,14 +85,25 @@ function CreateNews() {
         <AsyncSelect
           key={isSuccess.toString()}
           name='category'
-          onChange={(value) => formik.setFieldValue('category', value.map((item: CategoriesOptions) => item.value))}
+          onChange={(value) => formik.setFieldValue('categories', value.map((item) => item.value))}
           placeholder={'Выберите категории...'}
           isMulti
           defaultOptions
           loadOptions={loadOptions}
-          className='categorys-select'
+          value={getSelectValue}
+          className='categories-select'
           classNamePrefix='select'
           required
+          styles={{
+            input: (baseStyles) => ({
+              ...baseStyles,
+              cursor: 'text'
+            }),
+            option: (baseStyles) => ({
+              ...baseStyles,
+              cursor: 'pointer'
+            })
+          }}
           theme={(theme) => ({
             ...theme,
             colors: {
@@ -146,33 +115,18 @@ function CreateNews() {
           })}
         />
         <StyledFileInput name='imgURL' type='file' onChange={(value) => formik.setFieldValue('imgURL', value.target.files)} required />
+        
         <SunEditor
           name='text'
           onChange={(value) => formik.setFieldValue('text', value)}
+          setContents={formik.values.text}
           width='100%'
           height='400px'
-          setDefaultStyle={'font-size: 16px; border: 2px solid red;'}
-          setOptions={{
-            buttonList: [
-              ['undo', 'redo'],
-              ['bold', 'underline', 'italic', 'strike'],
-              ['fontColor', 'hiliteColor', 'textStyle'],
-              ['list', 'align', 'fontSize', 'formatBlock'],
-              [
-                'table',
-                'image',
-                'paragraphStyle',
-                'blockquote',
-                'outdent',
-                'indent',
-              ],
-              ['preview'],
-              ['removeFormat'],
-            ],
-          }}
+          setDefaultStyle={defaultEditorStyle}
+          setOptions={defaultEditorOptions}
         />
         {formik.errors.text && <Alert severity="warning">{formik.errors.text}</Alert>}
-          
+        
         <button type='submit'> Создать пост </button>
       </StyledForm>
     </>

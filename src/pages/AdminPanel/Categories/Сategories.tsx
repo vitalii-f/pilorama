@@ -1,12 +1,14 @@
-import { FirestoreService } from '@/services/firestore.service'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FormikErrors, useFormik } from 'formik'
-import styled from 'styled-components'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useState } from 'react'
 import { Dialog, DialogActions, DialogTitle } from '@mui/material'
+import { StyledCategoryList, StyledContainer, StyledDeleteButton, StyledForm, StyledLi, StyledUl } from './Categories.styled'
+import { DatabaseService } from '@/services/database.service'
+import { showAlert } from '@/utils/alert/ShowAlert'
+import { AlertProps } from '@/utils/interfaces/interfaces'
 
-interface ICategoryForm {
+interface categoryProps {
   category: string
 }
 
@@ -15,73 +17,20 @@ interface modalDeleteProps {
   name: string
 }
 
-const StyledContainer = styled.div`
-  display: flex;
-  gap: 25px 15px;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-  }
-`
-
-const StyledForm = styled.form`
-  flex: 1 0 50%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-`
-
-const StyledCategoryList = styled.div`
-  flex: 1 0 50%;
-
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-`
-
-const StyledUl = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`
-
-const StyledLi = styled.li`
-  display: flex;
-  justify-content: space-between;
-  gap: 5px;
-  padding: 8px 15px;
-  background-color: var(--color-bg-input);
-
-  border: 2px solid white;
-  border-radius: 20px;
-
-  @media (max-width: 425px) {
-    width: 100%;
-  }
-`
-
-const StyledDeleteButton = styled.button`
-  border-color: var(--color-red-delete);
-  transition: all 0.2s;
-  &:hover {
-    border-color: var(--color-red-delete);
-    box-shadow: 0px 0px 10px 3px rgba(238, 32, 76, 0.75);
-  }
-`
-
 const Сategories = () => {
+  const [alert, setAlert] = useState<AlertProps | null>(null)
   const [dialogOpened, setDialogOpened] = useState<modalDeleteProps>({
     opened: false,
     name: '',
   })
   const quaryClient = useQueryClient()
 
-  const formik = useFormik<ICategoryForm>({
+  const formik = useFormik<categoryProps>({
     initialValues: {
       category: '',
     },
     validate: (values) => {
-      const errors: FormikErrors<ICategoryForm> = {}
+      const errors: FormikErrors<categoryProps> = {}
       if (!values.category) {
         errors.category = 'Обязательное поле для ввода'
       } else if (values.category.length < 3) {
@@ -98,24 +47,30 @@ const Сategories = () => {
 
   const { mutate: mutateCreateCategory } = useMutation({
     mutationKey: ['category'],
-    mutationFn: (data: ICategoryForm) =>
-      FirestoreService.addCategory(data.category),
+    mutationFn: (data: categoryProps) =>
+      DatabaseService.addCategory(data.category),
     onSuccess: () => {
       quaryClient.invalidateQueries({ queryKey: ['category'] })
+    },
+    onError: (error) => {
+      setAlert({ type: 'error', message: error.message })
     },
   })
 
   const { mutate: mutateDeleteCategoryByName } = useMutation({
     mutationKey: ['category'],
-    mutationFn: (name: string) => FirestoreService.deleteCategoryByName(name),
+    mutationFn: (name: string) => DatabaseService.deleteCategoryByName(name),
     onSuccess: () => {
       quaryClient.invalidateQueries({ queryKey: ['category'] })
+    },
+    onError: (error) => {
+      setAlert({ type: 'error', message: error.message })
     },
   })
 
   const { data, isSuccess } = useQuery({
     queryKey: ['category'],
-    queryFn: async () => await FirestoreService.getСategoriesList(),
+    queryFn: async () => await DatabaseService.getCategoriesList(),
   })
 
   const handleModalOpen = (name: string) => {
@@ -135,7 +90,7 @@ const Сategories = () => {
     if (isSuccess) {
       return (
         <StyledUl>
-          {data.map((item) => (
+          {data && data.map((item) => (
             <StyledLi key={item.name}>
               {item.name}
               <DeleteIcon
@@ -177,6 +132,7 @@ const Сategories = () => {
         <label>Список категорий:</label>
         {renderCategoriesList()}
       </StyledCategoryList>
+      {alert && showAlert(alert.type, alert.message, setAlert)}
     </StyledContainer>
   )
 }

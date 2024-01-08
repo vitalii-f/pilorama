@@ -1,7 +1,6 @@
 export interface AlertProps {
-  type: string
+  type: 'success' | 'error' | 'warning' | 'none'
   message: string
-  showAlert?(type: string, message: string | null): void
 }
 
 export interface ICategory {

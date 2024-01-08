@@ -5,17 +5,23 @@ export interface NewsProps {
   newsCount: number | null
 }
 
+export enum NewsStatus {
+  loading = 'loading',
+  loaded = 'loaded',
+  reject = 'reject'
+}
+
 export interface CategoriesOptions {
   value: string
   label: string
 }
 
-export interface ArticleProps {
-  author: string
-  categories: string[]
-  creation_date: string
-  id: number
-  imgURL: string
-  text: string
-  title: string
-}
+// export interface ArticleProps {
+//   author: string
+//   categories: string[]
+//   creation_date: string
+//   id: number
+//   imgURL: string
+//   text: string
+//   title: string
+// }

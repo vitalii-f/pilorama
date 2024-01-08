@@ -24,9 +24,34 @@ export const AuthService = {
     const { error } = await supabase.auth.signOut()
     return error?.message
   },
-  // async updateUserProfile(data: UpdateProfileProps) {
+  updateUserLogin: async (login: string) => {
+    const { data, error } = await supabase.auth.updateUser({data: { login: login }})
+      console.log(data)
+      console.log(error)
+    // const user = (await supabase.auth.getUser()).data.user
+    // if (user) {
+      // const { data, error } = await supabase.from('profiles').update({login: login}).match({id: user.id})
 
-  // },
+    //   console.log(data)
+    //   console.log(error)
+    //   console.log("----")
+    //   console.log(login)
+    //   console.log(user)
+    // }
+    
+
+    // return error?.message
+  },
+  updateUserPassword: async (password: string) => {
+    const { error } = await supabase.auth.updateUser({password: password})
+    return error?.message
+  },
+  updateUserEmail: async (email: string) => {
+    const { data, error } = await supabase.auth.updateUser({email: email})
+    console.log(data)
+    console.log(error)
+    return error?.message
+  },
   // async verefyEmail() {
     
   // },

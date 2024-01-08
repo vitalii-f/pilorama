@@ -9,6 +9,7 @@ import {
 } from './NewsArticleDetail.styled'
 import LoadingSpinner from '../loading/LoadingSpinner'
 import { DatabaseService } from '@/services/database.service'
+import NewsComments from './comments/NewsComments'
 
 function NewsArticleDetail() {
   const { id } = useParams()
@@ -16,11 +17,14 @@ function NewsArticleDetail() {
   const { data, isSuccess, isLoading } = useQuery({
     queryKey: ['getArticleById'],
     queryFn: async () => id && await DatabaseService.getArticleById(+id),
+    refetchOnWindowFocus: false,
   })
 
   if (isLoading) return <LoadingSpinner />
 
-  if (isSuccess && data)
+  if (isSuccess && data && id) {
+    const creationDate = new Date(data[0].creation_date).toLocaleDateString()
+
     return (
       <StyledArticle>
         <StyledImg src={data[0].imgURL} />
@@ -30,10 +34,12 @@ function NewsArticleDetail() {
         ></StyledText>
         <StyledArticleFooter>
           <span>Автор: {data[0].author}</span>
-          <span>{data[0].creation_date}</span>
+          <span>{creationDate}</span>
         </StyledArticleFooter>
+        <NewsComments articleID={+id} />
       </StyledArticle>
     )
+  }
 }
 
 export default NewsArticleDetail

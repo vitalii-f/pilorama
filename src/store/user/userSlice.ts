@@ -4,6 +4,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState: UserSliceState = {
   user: null,
+  role: ['default'],
   status: UserStatus.loading
 }
 
@@ -21,7 +22,8 @@ export const userSlice = createSlice({
       state.status = UserStatus.loading
     }),
     builder.addCase(setUser.fulfilled, (state, { payload }) => {
-      state.user = payload
+      state.user = payload.user
+      state.role = payload.role
       state.status = UserStatus.loaded
     }),
     builder.addCase(setUser.rejected, (state) => {
@@ -35,16 +37,10 @@ export const setUser = createAsyncThunk(
   'user/setUser',
   async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    const { data } = await supabase.from('profiles').select('role')
-
-    return {...user, role: data && data[0].role}
-  }
-)
-
-export const getUserRole = createAsyncThunk(
-  'user/getUserRole',
-  async () => {
-    const role = await supabase.from('profiles').select()
+    if (!user) return {user: null, role: null}
+    
+    const { data: userRoles } = await supabase.from('profiles').select('role').eq('id', user?.id)
+    return {user: user, role: userRoles && userRoles[0].role}
   }
 )
 

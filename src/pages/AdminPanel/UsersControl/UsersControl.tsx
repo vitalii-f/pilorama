@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import { DataGrid } from '@mui/x-data-grid'
-import { ThemeProvider } from "styled-components";
-import { theme } from "@/utils/constants/theme";
 import { DatabaseService } from "@/services/database.service";
+import { useState } from "react";
+import { AlertProps } from "@/utils/interfaces/interfaces";
+import { showAlert } from "@/utils/alert/ShowAlert";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -12,23 +13,22 @@ const columns = [
 ];
 
 function UsersControl() {
-
+  const [_alert, setAlert] = useState<AlertProps | null>(null)
   const { data, isLoading, error } = useQuery(
     {
       queryKey: ['get Users'],
-      queryFn: () => DatabaseService.getAllUsers()
+      queryFn: () => DatabaseService.getAllUsers(),
     }
   )
   if (isLoading) return <h2> Loading... </h2>
-  if (error) return <h2> Error </h2>
+  if (error) return showAlert('error', error.message, setAlert)
+  if (!data) return <h2> No users </h2>
 
-  const rows: any = data
   return (
       <div className="">
         Пользователи
-        <ThemeProvider theme={theme}>
           <DataGrid
-            rows={rows}
+            rows={data}
             columns={columns}
             initialState={{
               pagination: {
@@ -37,15 +37,7 @@ function UsersControl() {
             }}
             pageSizeOptions={[5, 10]}
             checkboxSelection
-            sx={{
-              borderColor: theme.palette.primary.main,
-              color: theme.palette.primary.main,
-              '& .MuiTouchRipple-root, & .MuiInputBase-root, & .MuiSvgIcon-root, & .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-                color: theme.palette.primary.main,
-              },
-            }}
           />
-        </ThemeProvider>
       </div>
     )
   }
