@@ -4,7 +4,7 @@ import { UserLogInData } from '@/utils/interfaces/user.interfaces'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useState } from 'react'
-import { StyledErrorParagraph, StyledForm, StyledInput } from './AuthStyle'
+import { StyledErrorParagraph, StyledForm, StyledInput, StyledLabel } from './AuthStyle'
 import { AuthService } from '@/services/auth.service'
 
 const LogInSchema = Yup.object().shape({
@@ -26,14 +26,14 @@ function LogIn() {
     },
     validationSchema: LogInSchema,
     onSubmit: async (value) => {
-      const response = await AuthService.logInUser(value.email, value.password) //return only error
+      const response = await AuthService.logInUser(value.email, value.password)
       response ? setErrorCode(response) : dispatch(setUser())
     },
   })
 
   return (
     <StyledForm onSubmit={formik.handleSubmit}>
-      <label className='text-2xl text-center'>Вход в учётную запись</label>
+      <StyledLabel>Вход в учётную запись</StyledLabel>
       <StyledInput
         onChange={formik.handleChange}
         name='email'
@@ -42,7 +42,7 @@ function LogIn() {
         required
       />
       {formik.errors.email && (
-        <StyledErrorParagraph className='font-bold text-red-500'> {formik.errors.email} </StyledErrorParagraph>
+        <StyledErrorParagraph> {formik.errors.email} </StyledErrorParagraph>
       )}
 
       <StyledInput
@@ -53,7 +53,7 @@ function LogIn() {
         required
       />
       {formik.errors.password && (
-        <StyledErrorParagraph className='font-bold text-red-500'> {formik.errors.password} </StyledErrorParagraph>
+        <StyledErrorParagraph> {formik.errors.password} </StyledErrorParagraph>
       )}
       {errorCode && <StyledErrorParagraph>{errorCode}</StyledErrorParagraph>}
       <button type='submit'>Войти в систему</button>

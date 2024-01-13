@@ -24,8 +24,9 @@ export const AuthService = {
     const { error } = await supabase.auth.signOut()
     return error?.message
   },
-  updateUserLogin: async (login: string) => {
-    const { data, error } = await supabase.auth.updateUser({data: { login: login }})
+  updateUserLogin: async (login: string, id: string) => {
+    const { data, error } = await supabase.from('profiles').update({login}).eq('id', id).select()
+    // const { data, error } = await supabase.auth.updateUser({data: { login: login }})
       console.log(data)
       console.log(error)
     // const user = (await supabase.auth.getUser()).data.user

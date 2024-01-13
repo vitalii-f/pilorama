@@ -8,7 +8,6 @@ import styled from 'styled-components'
 import NewsCategories from './NewsCategories'
 import ErrorPage from '@/pages/ErrorPage/ErrorPage'
 import { RootState } from '@/store/store'
-import { NewsProps } from '@/utils/interfaces/article.interfaces'
 import { DatabaseService } from '@/services/database.service'
 
 const StyledNewsFeedSection = styled.section`
@@ -34,7 +33,7 @@ function NewsFeed() {
 
   const [filterCategory, setFilterCategory] = useState<string>('')
 
-  const { data, isError, refetch, error } = useQuery<NewsProps>({
+  const { data, isError, refetch, error } = useQuery({
     queryKey: ['articles', currentPage, itemsPerPage, filterCategory],
     queryFn: async () => {
       if (filterCategory.length) {

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FormikErrors, useFormik } from 'formik'
 import SendIcon from '@mui/icons-material/Send'
 import ClearIcon from '@mui/icons-material/Clear';
-import { StyledCancelButton, StyledCommentForm, StyledCommentInput, StyledSubmitButton } from './NewsCommentRedact.styled'
+import { StyledCancelButton, StyledCommentForm, StyledCommentInput, StyledSubmitButton } from './NewsCommentEdit.styled'
 
 interface NewsCommentRedactProps {
   id: number

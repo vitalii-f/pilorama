@@ -20,7 +20,7 @@ interface UserChangedData {
   avatar: Blob | null
 }
 
-const UserDataChange = ({ setModal, setAlert }: UserDataChangeProps) => {
+const UserDataChange = ({ setModal, setAlert, user }: UserDataChangeProps) => {
   const formik = useFormik<UserChangedData>({
     initialValues: {
       login: '',
@@ -46,7 +46,7 @@ const UserDataChange = ({ setModal, setAlert }: UserDataChangeProps) => {
       mutationKey: ['update profile'],
       mutationFn: async (data: UserChangedData) => {
         if (data.avatar) return await DatabaseService.updateUserAvatar(data.avatar)
-        if (data.login) return await AuthService.updateUserLogin(data.login)
+        if (data.login) return await AuthService.updateUserLogin(data.login, user.id)
         if (data.email) return await AuthService.updateUserEmail(data.email)
         if (data.password) return await AuthService.updateUserPassword(data.password)
       },

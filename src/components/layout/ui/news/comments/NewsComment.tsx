@@ -12,28 +12,22 @@ import {
 } from './NewsComment.styled'
 import { StyledAvatar } from './NewsComments.styled'
 import NewsCommentsDialog from './NewsCommentsDialog'
-import { TablesRow } from '@/utils/interfaces/Supabase.interfaces'
+import { TablesRow, TablesUpdate } from '@/utils/interfaces/Supabase.interfaces'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { DatabaseService } from '@/services/database.service'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import NewsCommentRedact from './NewsCommentRedact'
+import NewsCommentEdit from './NewsCommentEdit'
 
 interface NewsCommentProps {
-  comment: TablesRow<'comments'>
-  index: number
-  avatars: string[]
-  logins: string[]
+  comment: TablesRow<'comments'> & {profiles: TablesUpdate<'profiles'> | null}
   openedDialogMenu: number | null
   setOpenedDialogMenu(openedDialogMenu: number | null): void
 }
 
 const NewsComment = ({
   comment,
-  index,
-  avatars,
-  logins,
   openedDialogMenu,
   setOpenedDialogMenu,
 }: NewsCommentProps) => {
@@ -63,11 +57,11 @@ const NewsComment = ({
 
   return (
     <StyledComment>
-      <StyledAvatar src={avatars[index]} alt='avatar' />
+      <StyledAvatar src={comment.profiles?.avatar} alt='avatar' />
       <StyledCommentBody>
-        <p>{logins[index]}</p>
+        <p>{comment.profiles?.login}</p>
         {redactingComment === comment.id
-         ? <NewsCommentRedact id={comment.id} text={comment.text} setRedactingComment={setRedactingComment} />
+         ? <NewsCommentEdit id={comment.id} text={comment.text} setRedactingComment={setRedactingComment} />
          : <StyledCommentText>{comment.text}</StyledCommentText>
         }
         <StyledRatingBar>

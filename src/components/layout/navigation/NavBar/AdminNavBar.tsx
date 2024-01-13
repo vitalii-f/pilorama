@@ -12,7 +12,10 @@ function AdminNavBar() {
           <StlyedNavLink to='/admin/usersControl'>Пользователи</StlyedNavLink>
         </li>
         <li>
-          <StlyedNavLink to='/admin/categorys'>Категории</StlyedNavLink>
+          <StlyedNavLink to='/admin/categories'>Категории</StlyedNavLink>
+        </li>
+        <li>
+          <StlyedNavLink to='/admin/reports'>Жалобы</StlyedNavLink>
         </li>
       </StyledUl>
     </StyledNav>

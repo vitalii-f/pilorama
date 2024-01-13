@@ -14,14 +14,18 @@ export const DatabaseService = {
       throw new Error(error as string)
     }
   },
+  async getUserEmail (id: string) {
+    try {
+      const { data, error } = await supabase.from('profiles').select('email').eq('id', id)
+      if (error) throw new Error(error.message)
+      return data
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  },
   async addArticle(article: TablesInsert<'news_articles'>) {
     try {
-      const { data: currentUser, error: getUserError } =
-        await supabase.auth.getUser()
-      if (getUserError) throw getUserError.message
-
       const request: TablesInsert<'news_articles'> = {
-        author: currentUser.user?.user_metadata.login,
         title: article.title,
         text: article.text,
         categories: article.categories,
@@ -69,11 +73,10 @@ export const DatabaseService = {
 
       const { data, error: getArticlesError } = await supabase
         .from('news_articles')
-        .select('*', { count: 'exact' })
+        .select('*, profiles(login)', { count: 'exact' })
         .range(startIndex, limit)
         .order('creation_date', { ascending: false })
       if (getArticlesError) throw getArticlesError.message
-
       return { news: data, newsCount: count }
     } catch (error) {
       throw new Error(error as string)
@@ -87,7 +90,7 @@ export const DatabaseService = {
     try {
       const { data, count, error } = await supabase
         .from('news_articles')
-        .select('*', { count: 'exact' })
+        .select('*, profiles(login)', { count: 'exact' })
         .contains('categories', [category])
         .range(startIndex, limit)
         .order('creation_date', { ascending: false })
@@ -102,7 +105,7 @@ export const DatabaseService = {
     try {
       const { data, error } = await supabase
         .from('news_articles')
-        .select()
+        .select('*, profiles(login)')
         .eq('id', id)
       if (data && data[0].views != null) {
         const views = data[0].views
@@ -191,32 +194,6 @@ export const DatabaseService = {
       throw new Error(error as string)
     }
   },
-  async getUserAvatarById(id: string) {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar')
-        .eq('id', id)
-      if (error) throw error.message
-
-      return data && data[0].avatar
-    } catch (error) {
-      throw new Error(error as string)
-    }
-  },
-  async getUserDataByMultipleId(id: string[]) {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar, id, login')
-        .in('id', id)
-        
-      if (error) throw error.message
-      return data
-    } catch (error) {
-      throw new Error(error as string)
-    }
-  },
   async updateUserAvatar(avatar: Blob) {
     const user = (await supabase.auth.getUser()).data.user
     if (user) {
@@ -287,15 +264,9 @@ export const DatabaseService = {
   },
   async getComments(articleID: number, startIndex: number, limit: number) {
     try {
-      // const { count } = await supabase
-      //   .from('comments')
-      //   .select('*', { count: 'exact', head: true })
-      //   .eq('article_id', articleID)
-      // if (error) throw new Error(error.message)
-
       const { data, error } = await supabase
         .from('comments')
-        .select('*')
+        .select('*, profiles(login, avatar)')
         .eq('article_id', articleID)
         .order('created_at', { ascending: false })
         .range(startIndex, limit)
@@ -324,8 +295,7 @@ export const DatabaseService = {
       const currentUser = await this.getCurrentUser()
       comment.author_id = currentUser.user.id
 
-      const { data, error } = await supabase.from('comments').insert(comment)
-      console.log(data)
+      const { error } = await supabase.from('comments').insert(comment)
       if (error) throw new Error(error.message)
     } catch (error) {
       throw new Error(error as string)
@@ -371,4 +341,50 @@ export const DatabaseService = {
       throw new Error(error as string)
     }
   },
+  async sendReport(comment_id: number, text: string) {
+    try {
+      const id = (await this.getCurrentUser()).user.id
+
+      const insertData: TablesInsert<'reports'> = {
+        author_id: id,
+        comment_id,
+        text,
+      }
+      
+      const { data, error } = await supabase.from('reports').insert(insertData).select()
+      if (error) throw new Error(error.message)
+      return data
+    } catch(error) {
+      throw new Error(error as string)
+    }
+  },
+  async getReports(startIndex: number, limit: number) {
+    try {
+      const { data, error } = await supabase
+        .from('reports')
+        .select('*, profiles (email, login), comments(text)')
+        .order('created_at', { ascending: false })
+        .range(startIndex, limit)
+
+      if (error) throw new Error(error.message)
+      return data
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  },
+  async closeReport(id: number) {
+    const closed_at = new Date()
+    try {
+      const { data, error } = await supabase
+        .from('reports')
+        .update({status: 'closed', closed_at: closed_at.toUTCString()})
+        .eq('id', id)
+        .select('*')
+
+      if (error) throw new Error(error.message)
+      return data
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  }
 }

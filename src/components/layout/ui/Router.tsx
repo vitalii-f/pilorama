@@ -9,8 +9,9 @@ import SignUpPage from "@/pages/AuthPage/SignUpPage";
 import Profile from "@/pages/UserProfile/Profile";
 import UsersControl from "@/pages/AdminPanel/UsersControl/UsersControl";
 import Header from "../header/Header";
-import Categorys from "@/pages/AdminPanel/Categories/Сategories";
+import Categories from "@/pages/AdminPanel/Categories/Сategories";
 import EditArticlePage from "@/pages/Articles/EditArticlePage";
+import Reports from "@/pages/AdminPanel/Reports/Reports";
 
 function Router() {
   return (
@@ -23,7 +24,8 @@ function Router() {
           <Route path="/admin" element={<AdminPanel />}>
             <Route path='createNews' element={<CreateNews />}/>
             <Route path='usersControl'element={<UsersControl />}/>
-            <Route path='categorys' element={<Categorys />}/>
+            <Route path='categories' element={<Categories />}/>
+            <Route path='reports' element={<Reports />}/>
           </Route>
     
           <Route path="/articles" element={<ArticlesPage />}/>

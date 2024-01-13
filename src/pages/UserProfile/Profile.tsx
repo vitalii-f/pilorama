@@ -29,9 +29,7 @@ const Profile = () => {
   if (userData.status === 'reject') return <h1> Error </h1>
 
   const changeModal = (): void => {
-    if (modal) {
-      setModal(false)
-    } else setModal(true)
+    setModal(!modal)
   }
 
   async function sendVerefyMessage() {
@@ -41,11 +39,11 @@ const Profile = () => {
   
   return (
     userData.user && (
-      <StyledSection id='profile' className="w-full mt-5">
+      <StyledSection id='profile'>
         <StyledWrapper>
           {userAvatar && <StyledAvatar src={userAvatar} alt="avatar" />}
           <StyledProfile>
-            <p>Имя пользователя: {userData.user.user_metadata.login}</p>
+            <p>Имя пользователя: {userData.login}</p>
             <p>E-mail: {userData.user.new_email || userData.user.email}</p>
             <p>Статус подтверждения почты: {userData.user.email_confirmed_at ? <span className="text-green-500"> подтверждена! </span> : <span className="text-red-500"> не подтверждена! </span>}</p>
             {!userData.user.email_confirmed_at && <button onClick={() => sendVerefyMessage()}>Подтвердить почту</button>}

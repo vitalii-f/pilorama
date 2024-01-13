@@ -3,7 +3,7 @@ import { setUser } from '@/store/user/userSlice'
 import { UserSignUpData } from '@/utils/interfaces/user.interfaces'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { StyledErrorParagraph, StyledForm, StyledInput } from './AuthStyle'
+import { StyledErrorParagraph, StyledForm, StyledInput, StyledLabel } from './AuthStyle'
 import { useState } from 'react'
 import { AuthService } from '@/services/auth.service'
 
@@ -39,7 +39,7 @@ function SignUp() {
 
   return (
     <StyledForm onSubmit={formik.handleSubmit}>
-      <label className='text-2xl text-center'>Реистрация</label>
+      <StyledLabel>Реистрация</StyledLabel>
       <StyledInput
         name='login'
         type='text'
@@ -75,7 +75,6 @@ function SignUp() {
 
       <button type='submit'>Зарегестрироваться</button>
       {errorCode && <StyledErrorParagraph>{errorCode}</StyledErrorParagraph>}
-
     </StyledForm>
   )
 }

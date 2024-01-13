@@ -4,6 +4,7 @@ export interface UserSliceState {
   user: User | null
   role: string[] | null
   status: UserStatus
+  login: string | null | undefined
 }
 
 export interface UserSelectorProps {

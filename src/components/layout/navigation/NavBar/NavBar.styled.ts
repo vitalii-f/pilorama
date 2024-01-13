@@ -77,5 +77,8 @@ export const StyledLogoText = styled.h2`
     font-size: 28px;
     font-weight: bold;
     text-transform: uppercase;
+`
 
+export const StyledLogo = styled.img`
+    width: 120px;
 `

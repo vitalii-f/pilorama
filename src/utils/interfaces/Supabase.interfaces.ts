@@ -69,27 +69,19 @@ export interface Database {
           likes?: number
           text?: string
         }
-        Relationships: []
-      }
-      forTest: {
-        Row: {
-          id: number
-          text: string
-        }
-        Insert: {
-          id?: number
-          text: string
-        }
-        Update: {
-          id?: number
-          text?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       news_articles: {
         Row: {
-          author: string
-          author_id: string | null
+          author_id: string
           categories: string[]
           creation_date: string
           id: number
@@ -99,8 +91,7 @@ export interface Database {
           views: number | null
         }
         Insert: {
-          author?: string
-          author_id?: string | null
+          author_id?: string
           categories: string[]
           creation_date?: string
           id?: number
@@ -110,8 +101,7 @@ export interface Database {
           views?: number | null
         }
         Update: {
-          author?: string
-          author_id?: string | null
+          author_id?: string
           categories?: string[]
           creation_date?: string
           id?: number
@@ -120,7 +110,15 @@ export interface Database {
           title?: string
           views?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "news_articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -150,6 +148,51 @@ export interface Database {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      reports: {
+        Row: {
+          author_id: string
+          closed_at: string | null
+          comment_id: number
+          created_at: string
+          id: number
+          status: string
+          text: string
+        }
+        Insert: {
+          author_id?: string
+          closed_at?: string | null
+          comment_id: number
+          created_at?: string
+          id?: number
+          status?: string
+          text: string
+        }
+        Update: {
+          author_id?: string
+          closed_at?: string | null
+          comment_id?: number
+          created_at?: string
+          id?: number
+          status?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
             referencedColumns: ["id"]
           }
         ]

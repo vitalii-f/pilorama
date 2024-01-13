@@ -17,3 +17,8 @@ export const StyledErrorParagraph = styled.p`
   color: var(--color-error);
   text-align: center;
 `
+
+export const StyledLabel = styled.label`
+  font-size: 1.5rem;
+  text-align: center;
+`

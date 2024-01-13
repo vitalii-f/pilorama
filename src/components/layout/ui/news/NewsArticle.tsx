@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import ArticleOptionsMenu from './ArticleOptionsMenu'
-import { Tables } from '@/utils/interfaces/Supabase.interfaces'
+import { Tables, TablesUpdate } from '@/utils/interfaces/Supabase.interfaces'
 
 const StyledArticle = styled.div`
   display: flex;
@@ -29,7 +29,7 @@ const StyledImg = styled.img`
 `
 
 interface NewsArticleProps {
-  article: Tables<'news_articles'>
+  article: Tables<'news_articles'> & {profiles: TablesUpdate<'profiles'> | null}
   haveAccess: boolean
 }
 
@@ -63,7 +63,7 @@ const NewsArticle = ({ article, haveAccess }: NewsArticleProps) => {
                 {article.title}
               </h3>
             </Link>
-            <p className='text-xs'>Автор:{article.author}</p>
+            <p className='text-xs'>Автор:{article.profiles!.login}</p>
           </div>
           <div className='relative'>
             {haveAccess && <button onClick={() => togleMenu(article.id)}>...</button>}

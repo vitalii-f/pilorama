@@ -10,9 +10,15 @@ import {
 import LoadingSpinner from '../loading/LoadingSpinner'
 import { DatabaseService } from '@/services/database.service'
 import NewsComments from './comments/NewsComments'
+import ReportForm from '@/components/reportForm/ReportForm'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 
 function NewsArticleDetail() {
   const { id } = useParams()
+
+  const isReportFormOpened = useSelector((state: RootState) => state.reportSlice.isOpened)
+  const targetID = useSelector((state: RootState) => state.reportSlice.target_id)
 
   const { data, isSuccess, isLoading } = useQuery({
     queryKey: ['getArticleById'],
@@ -33,10 +39,11 @@ function NewsArticleDetail() {
           dangerouslySetInnerHTML={{ __html: data[0].text }}
         ></StyledText>
         <StyledArticleFooter>
-          <span>Автор: {data[0].author}</span>
+          <span>Автор: {data[0].profiles?.login}</span>
           <span>{creationDate}</span>
         </StyledArticleFooter>
         <NewsComments articleID={+id} />
+        {isReportFormOpened && targetID && <ReportForm target_id={targetID} type='comment' />}
       </StyledArticle>
     )
   }

@@ -20,6 +20,8 @@ import NewsComment from './NewsComment'
 import React, { useEffect, useState } from 'react'
 import LoadingSpinner from '../../loading/LoadingSpinner'
 
+//TODO: Make load spinner for comments
+
 interface NewsCommentsProps {
   articleID: number
 }
@@ -64,39 +66,19 @@ const NewsComments = ({ articleID }: NewsCommentsProps) => {
     data: commentsData,
     isSuccess,
     isLoading,
-    fetchNextPage
+    fetchNextPage,
   } = useInfiniteQuery({
     queryKey: ['get comments'],
     queryFn: async ({ pageParam }) => {
       const comments = await DatabaseService.getComments(articleID, pageParam * 5, pageParam * 5 + 5 - 1)
       const count = await DatabaseService.getCommentCount(articleID)
 
-      const authorIDs: string[] = []
-      const logins: string[] = []
-
-      comments.map((item) => {
-        authorIDs.push(item.author_id)
-      })
-
-      const avatarList = await DatabaseService.getUserDataByMultipleId(
-        authorIDs
-      )
-
-      const avatars: string[] = []
-      comments.map((comment) => {
-        avatarList.find((item) => {
-          if (comment.author_id === item.id) {
-            avatars.push(item.avatar)
-            logins.push(item.login)
-          }
-        })
-      })
       if (userData) {
         const authorAvatar = await DatabaseService.getUserAvatar()
-        return { comments, avatars, logins, authorAvatar, count }
+        return { comments, authorAvatar, count }
       }
       
-      return { comments, avatars, logins, count }
+      return { comments, count }
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, _pages, lastPageParam) => {
@@ -125,15 +107,14 @@ const NewsComments = ({ articleID }: NewsCommentsProps) => {
     if (isSuccess) {
       return commentsData.pages.map((group, i) => (
         <React.Fragment key={i + Date()}>
-          {group.comments.map((item, index) => (
-        <NewsComment comment={item} index={index} avatars={group.avatars} logins={group.logins} openedDialogMenu={openedDialogMenu} setOpenedDialogMenu={setOpenedDialogMenu} key={item.id} />
+          {group.comments.map((item) => (
+        <NewsComment comment={item} openedDialogMenu={openedDialogMenu} setOpenedDialogMenu={setOpenedDialogMenu} key={item.id} />
       ))}
         </React.Fragment>
       ))
     }
   }
 
-  // if (isLoading) return <>LOADING</>
   return (
     <StyledWrapper>
       <StyledControl>

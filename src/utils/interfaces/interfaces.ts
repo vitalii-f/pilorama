@@ -6,3 +6,5 @@ export interface AlertProps {
 export interface ICategory {
   name: string
 }
+
+export type ReportType = 'comment' | 'article'
