@@ -19,7 +19,7 @@ const StyledNewsFeedSection = styled.section`
   flex-direction: column;
 `
 
-function NewsFeed() {
+const NewsFeed = () => {
   const userData = useSelector((state: RootState) => state.userSlice)
 
   const [haveAccess, setHaveAccess] = useState<boolean>(false)
@@ -33,7 +33,7 @@ function NewsFeed() {
 
   const [filterCategory, setFilterCategory] = useState<string>('')
 
-  const { data, isError, refetch, error } = useQuery({
+  const { data, isLoading, isError, refetch, error } = useQuery({
     queryKey: ['articles', currentPage, itemsPerPage, filterCategory],
     queryFn: async () => {
       if (filterCategory.length) {
@@ -68,26 +68,27 @@ function NewsFeed() {
   return (
     <StyledNewsFeedSection>
       {renderNewsCategories}
-      {data && data.news && data.newsCount ? (
-        <>
-          {data.news.map((article) => (
-            <NewsArticle
-              article={article}
-              haveAccess={haveAccess}
-              key={article.id}
-            />
-          ))}
-          <NewsPagination
-            itemsPerPage={itemsPerPage}
-            setItemsPerPage={setItemsPerPage}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            pageCount={Math.ceil(data.newsCount / itemsPerPage)}
-          />
-        </>
-      ) : (
-        <LoadingSpinner />
+      {isLoading ? <LoadingSpinner />
+      : (data && !data.newsCount && data.newsCount === 0) ? <h2>No articles</h2>
+      : (data && data.newsCount) ? <> {data.news.map((article) => (
+        <NewsArticle
+          article={article}
+          haveAccess={haveAccess}
+          key={article.id}
+        />
+        )
       )}
+      <NewsPagination
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageCount={Math.ceil(data.newsCount / itemsPerPage)}
+      />
+      </>
+      : null
+    }
+
     </StyledNewsFeedSection>
   )
 }

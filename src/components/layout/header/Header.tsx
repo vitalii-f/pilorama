@@ -1,6 +1,6 @@
 import NavBar from "../navigation/NavBar/NavBar"
 
-function Header() {
+const Header = () => {
   return (
     <header>
       <NavBar />

@@ -1,4 +1,4 @@
-import Router from './components/layout/ui/Router'
+import Router from './routes/Router'
 import { useAppDispatch } from '@/store/store'
 import { setUser } from '@/store/user/userSlice'
 

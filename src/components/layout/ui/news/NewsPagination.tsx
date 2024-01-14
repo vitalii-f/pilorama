@@ -1,4 +1,4 @@
-import { StyledPaginate, StyledSelect } from "./NewsPagination.styled"
+import { PaginateWrapper, StyledPaginate, StyledSelect } from "./NewsPagination.styled"
 
 interface NewsPaginationProps {
   itemsPerPage: number
@@ -20,7 +20,7 @@ const NewsPagination = ({
   }
 
   return (
-    <div className='flex items-center'>
+    <PaginateWrapper>
       <StyledPaginate
         nextLabel='›'
         onPageChange={handlePageClick}
@@ -42,7 +42,7 @@ const NewsPagination = ({
         <option>5</option>
         <option>10</option>
       </StyledSelect>
-    </div>
+    </PaginateWrapper>
   )
 }
 

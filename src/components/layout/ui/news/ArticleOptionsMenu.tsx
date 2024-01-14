@@ -3,13 +3,16 @@ import { RootState } from '@/store/store'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { StyledUl, StyledLi } from './ArticleOptionsMenu.styled'
+import { StyledUl, StyledMenu, StyledButton, StyledBackdrop } from './ArticleOptionsMenu.styled'
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface ArticleOptionsMenuProps {
   id: number
+  setOpenedDialogMenu({}: number | null): void
 }
 
-const ArticleOptionsMenu = ({ id }: ArticleOptionsMenuProps) => {
+const ArticleOptionsMenu = ({ id, setOpenedDialogMenu }: ArticleOptionsMenuProps) => {
   const queryClient = useQueryClient()
   const userData = useSelector((state: RootState) => state.userSlice)
   const navigate = useNavigate()
@@ -29,14 +32,24 @@ const ArticleOptionsMenu = ({ id }: ArticleOptionsMenuProps) => {
   }
 
   return (
-    <div>
+    // <div>
+    //   <StyledUl>
+    //     <StyledLi onClick={redirectToEdit}>Редактировать</StyledLi>
+    //     <StyledLi type='delete' onClick={() => mutate(id)}>
+    //       Удалить
+    //     </StyledLi>
+    //   </StyledUl>
+    // </div>
+
+  <div>
+    <StyledMenu>
       <StyledUl>
-        <StyledLi onClick={redirectToEdit}>Редактировать</StyledLi>
-        <StyledLi type='delete' onClick={() => mutate(id)}>
-          Удалить
-        </StyledLi>
+        <li><StyledButton onClick={redirectToEdit}><EditIcon />Редактировать</StyledButton></li>
+        <li><StyledButton onClick={() => mutate(id)} $colorType='delete'><DeleteIcon />Удалить</StyledButton></li>
       </StyledUl>
-    </div>
+    </StyledMenu>
+    <StyledBackdrop onClick={() => setOpenedDialogMenu(null)} />
+  </div>
   )
 }
 

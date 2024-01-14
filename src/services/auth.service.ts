@@ -25,37 +25,35 @@ export const AuthService = {
     return error?.message
   },
   updateUserLogin: async (login: string, id: string) => {
-    const { data, error } = await supabase.from('profiles').update({login}).eq('id', id).select()
-    // const { data, error } = await supabase.auth.updateUser({data: { login: login }})
-      console.log(data)
-      console.log(error)
-    // const user = (await supabase.auth.getUser()).data.user
-    // if (user) {
-      // const { data, error } = await supabase.from('profiles').update({login: login}).match({id: user.id})
+    try {
+      const { data, error } = await supabase.from('profiles').update({login}).eq('id', id).select()
+      if (error) throw new Error(error.message)
 
-    //   console.log(data)
-    //   console.log(error)
-    //   console.log("----")
-    //   console.log(login)
-    //   console.log(user)
-    // }
-    
-
-    // return error?.message
+      return data
+    } catch(error) {
+      throw new Error(error as string)
+    }
   },
   updateUserPassword: async (password: string) => {
-    const { error } = await supabase.auth.updateUser({password: password})
-    return error?.message
+    try {
+      const { data, error } = await supabase.auth.updateUser({password: password})
+      if (error) throw new Error(error.message)
+
+      return data
+    } catch(error) {
+      throw new Error(error as string)
+    }
   },
   updateUserEmail: async (email: string) => {
-    const { data, error } = await supabase.auth.updateUser({email: email})
-    console.log(data)
-    console.log(error)
-    return error?.message
+    try {
+      const { data, error } = await supabase.auth.updateUser({email: email})
+      if (error) throw new Error(error.message)
+
+      return data
+    } catch(error) {
+      throw new Error(error as string)
+    }
   },
-  // async verefyEmail() {
-    
-  // },
   // async addRole(userID: string, role: [string], email: string, login: string) {
   //  
   // },
@@ -63,9 +61,6 @@ export const AuthService = {
   //   
   // },
   // async removeRole(userID: string, role: string) {
-  //   
-  // },
-  // async getUsers() {
   //   
   // },
 }

@@ -15,6 +15,7 @@ export const userSlice = createSlice({
   reducers: {
     signOutUser: (state) => {
         state.user = null
+        state.login = null
     }
   },
   extraReducers: (builder) => {

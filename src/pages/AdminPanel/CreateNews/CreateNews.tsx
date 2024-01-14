@@ -12,7 +12,7 @@ import { StyledFileInput, StyledForm } from './CreateNews.styled'
 import { showAlert } from '@/utils/alert/ShowAlert'
 import { defaultEditorOptions, defaultEditorStyle } from '@/utils/constants/textEditor.sonstants'
 
-function CreateNews() {
+const CreateNews = () => {
   const [alert, setAlert] = useState<AlertProps | null>(null)
 
   const formik = useFormik<TablesInsert<'news_articles'>>({

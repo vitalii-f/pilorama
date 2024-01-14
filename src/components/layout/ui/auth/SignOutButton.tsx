@@ -21,7 +21,7 @@ const StyledButton = styled.button`
   }
 `
 
-function SignOutButton() {
+const SignOutButton = () => {
   const dispatch = useAppDispatch()
   return (
     <>

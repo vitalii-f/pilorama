@@ -1,89 +1,55 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 import ArticleOptionsMenu from './ArticleOptionsMenu'
 import { Tables, TablesUpdate } from '@/utils/interfaces/Supabase.interfaces'
-
-const StyledArticle = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-top: 20px;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`
-
-const ArticleImgContainer = styled.div`
-  flex-shrink: 3;
-`
-
-const StyledImg = styled.img`
-  max-width: 220px;
-  max-height: 130px;
-  
-  @media (max-width: 768px) {
-    max-width: 100%;
-    max-height: 200px;
-  }
-`
+import { ArticleAuthor, ArticleCategories, ArticleContent, ArticleDate, ArticleFooter, ArticleHeader, ArticleImgContainer, ArticleMenu, ArticleTitle, StyledArticle, StyledImg, StyledOptionsButton } from './NewsArticle.styled'
 
 interface NewsArticleProps {
   article: Tables<'news_articles'> & {profiles: TablesUpdate<'profiles'> | null}
   haveAccess: boolean
 }
 
-interface ElementVisibilityProps {
-  id: number | null
-  togled: boolean
-}
-
 const NewsArticle = ({ article, haveAccess }: NewsArticleProps) => {
-  const [elementVisibility, setElementVisibility] = useState<ElementVisibilityProps>({
-    id: null,
-    togled: false,
-  })
+  const [openedDialogMenu, setOpenedDialogMenu] = useState<number | null>(null)
 
-  function togleMenu(id: number) {
-    elementVisibility.togled
-      ? setElementVisibility(() => ({ id: id, togled: false }))
-      : setElementVisibility(() => ({ id: id, togled: true }))
+  const handleMenuClick = () => {
+    openedDialogMenu ? setOpenedDialogMenu(null) : setOpenedDialogMenu(article.id)
   }
 
   return (
-    <StyledArticle className='transition-shadow shadow-md sm:flex-row'>
-      <ArticleImgContainer className=''>
+    <StyledArticle>
+      <ArticleImgContainer>
         <StyledImg src={article.imgURL} />
       </ArticleImgContainer>
-      <div className='flex flex-col justify-between w-full py-2'>
-        <div className='flex items-center justify-between pb-2 border-b-2 border-solid border-slate-500'>
+      <ArticleContent>
+        <ArticleHeader>
           <div>
-            <Link to={'' + article.id}>
-              <h3 className='text-lg break-words text-ellipsis line-clamp-3'>
+            <Link to={'/articles/' + article.id}>
+              <ArticleTitle>
                 {article.title}
-              </h3>
+              </ArticleTitle>
             </Link>
-            <p className='text-xs'>Автор:{article.profiles!.login}</p>
+            <ArticleAuthor>Автор: {article.profiles!.login}</ArticleAuthor>
           </div>
-          <div className='relative'>
-            {haveAccess && <button onClick={() => togleMenu(article.id)}>...</button>}
-            {elementVisibility.togled && elementVisibility.id === article.id && <ArticleOptionsMenu id={article.id} />}
-          </div>
-        </div>
-        <div className='flex justify-between'>
-          <span className='mt-2 text-xs'>
-            {/* {article.creation_date} */}
-          </span>
-          <div className='flex gap-3'>
+          <ArticleMenu>
+            {haveAccess && <StyledOptionsButton onClick={handleMenuClick}>...</StyledOptionsButton>}
+            {openedDialogMenu === article.id && <ArticleOptionsMenu id={article.id} setOpenedDialogMenu={setOpenedDialogMenu} />}
+          </ArticleMenu>
+        </ArticleHeader>
+        <ArticleFooter>
+          <ArticleDate>
+            {new Date(article.creation_date).toLocaleDateString()}
+          </ArticleDate>
+          <ArticleCategories>
             {article.categories &&
               article.categories.map((category) => (
-                <span key={category} className='mt-2 text-xs'>
+                <span key={category}>
                   {category}
                 </span>
               ))}
-          </div>
-        </div>
-      </div>
+          </ArticleCategories>
+        </ArticleFooter>
+      </ArticleContent>
     </StyledArticle>
   )
 }

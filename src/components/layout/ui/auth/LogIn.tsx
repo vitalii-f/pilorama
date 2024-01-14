@@ -15,7 +15,7 @@ const LogInSchema = Yup.object().shape({
     .required('Обязательное поле'),
 })
 
-function LogIn() {
+const LogIn = () => {
   const [errorCode, setErrorCode] = useState<string>('')
   const dispatch = useAppDispatch()
 

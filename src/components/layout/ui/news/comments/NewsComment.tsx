@@ -17,7 +17,6 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { DatabaseService } from '@/services/database.service'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
 import NewsCommentEdit from './NewsCommentEdit'
 
 interface NewsCommentProps {
@@ -33,8 +32,7 @@ const NewsComment = ({
 }: NewsCommentProps) => {
   const userData = useSelector((state: RootState) => state.userSlice.user)
   const queryClient = useQueryClient()
-
-  const [redactingComment, setRedactingComment] = useState<number | null>(null)
+  const redactingComment = useSelector((state: RootState) => state.dialogMenuSlice.id)
 
   const handleLikeClick = async (commentID: number) => {
     if (userData) {
@@ -61,7 +59,7 @@ const NewsComment = ({
       <StyledCommentBody>
         <p>{comment.profiles?.login}</p>
         {redactingComment === comment.id
-         ? <NewsCommentEdit id={comment.id} text={comment.text} setRedactingComment={setRedactingComment} />
+         ? <NewsCommentEdit id={comment.id} text={comment.text} />
          : <StyledCommentText>{comment.text}</StyledCommentText>
         }
         <StyledRatingBar>
@@ -104,7 +102,7 @@ const NewsComment = ({
           ...
         </StyledOptionsButton>
         {openedDialogMenu === comment.id && (
-          <NewsCommentsDialog setOpenedDialogMenu={setOpenedDialogMenu} id={comment.id} authorID={comment.author_id} setRedactingComment={setRedactingComment} />
+          <NewsCommentsDialog setOpenedDialogMenu={setOpenedDialogMenu} id={comment.id} authorID={comment.author_id} />
         )}
       </div>
     </StyledComment>

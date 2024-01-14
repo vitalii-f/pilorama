@@ -12,7 +12,7 @@ const columns = [
   { field: 'role', headerName: 'Roles', width: 150 },
 ];
 
-function UsersControl() {
+const UsersControl = () => {
   const [_alert, setAlert] = useState<AlertProps | null>(null)
   const { data, isLoading, error } = useQuery(
     {

@@ -230,7 +230,7 @@ export const DatabaseService = {
 
     const cyrillicChars = cyrillic.split('')
     const latinChars = latin.split('')
-    const cyrillicToLatin: any = {}
+    const cyrillicToLatin: {[char: string]: string} = {}
 
     cyrillicChars.forEach((char, index) => {
       cyrillicToLatin[char] = latinChars[index]

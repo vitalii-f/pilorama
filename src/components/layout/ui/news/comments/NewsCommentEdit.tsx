@@ -5,15 +5,17 @@ import { FormikErrors, useFormik } from 'formik'
 import SendIcon from '@mui/icons-material/Send'
 import ClearIcon from '@mui/icons-material/Clear';
 import { StyledCancelButton, StyledCommentForm, StyledCommentInput, StyledSubmitButton } from './NewsCommentEdit.styled'
+import { useDispatch } from 'react-redux'
+import { setRedactingComment } from '@/store/comments/dialogMenuSlice'
 
 interface NewsCommentRedactProps {
   id: number
   text: string
-  setRedactingComment(redactingComment: number | null): void
 }
 
-const NewsCommentRedact = ({ id, text, setRedactingComment }: NewsCommentRedactProps) => {
+const NewsCommentRedact = ({ id, text }: NewsCommentRedactProps) => {
   const queryClient = useQueryClient()
+  const dispatch = useDispatch()
 
   const formik = useFormik<TablesUpdate<'comments'>>({
     initialValues: {
@@ -39,12 +41,12 @@ const NewsCommentRedact = ({ id, text, setRedactingComment }: NewsCommentRedactP
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get comments'] })
-      setRedactingComment(null)
+      dispatch(setRedactingComment({id: null}))
     },
   })
 
   const handleCancel = () => {
-    setRedactingComment(null)
+    dispatch(setRedactingComment({id: null}))
   }
 
   return (

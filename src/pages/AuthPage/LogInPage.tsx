@@ -14,7 +14,7 @@ const StyledLink = styled(Link)`
   color: var(--color-secondary);
 `
 
-function LoginPage() {
+const LoginPage = () => {
   const userData = useSelector((state: RootState) => state.userSlice)
   
   if (userData.status === 'loading') return <LoadingSpinner />

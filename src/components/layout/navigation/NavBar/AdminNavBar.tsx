@@ -1,7 +1,7 @@
 import { StyledNav, StyledUl } from './AdminNavBar.styled'
 import { StlyedNavLink } from './NavBar.styled'
 
-function AdminNavBar() {
+const AdminNavBar = () => {
   return (
     <StyledNav>
       <StyledUl>

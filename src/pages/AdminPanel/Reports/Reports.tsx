@@ -28,7 +28,7 @@ interface RowData {
   comment_text: string | undefined,
 }
 
-function Row(props: { row: RowData }) {
+const Row = (props: { row: RowData }) => {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
 
@@ -103,7 +103,7 @@ function Row(props: { row: RowData }) {
   );
 }
 
-export default function Report() {
+const Report = () => {
   const { data: rows, isLoading } = useQuery({
     queryKey: ['reports'],
     queryFn: async () => {
@@ -150,3 +150,5 @@ export default function Report() {
     </TableContainer>
   );
 }
+
+export default Report

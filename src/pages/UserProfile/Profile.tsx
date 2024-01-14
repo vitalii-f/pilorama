@@ -32,10 +32,7 @@ const Profile = () => {
     setModal(!modal)
   }
 
-  async function sendVerefyMessage() {
-  }
-  
-  const creationDate = userData.user && userData.user.created_at && new Date(userData.user.created_at)
+  const creationDate = userData.user && userData.user.created_at && new Date(userData.user.created_at).toLocaleDateString()
   
   return (
     userData.user && (
@@ -45,9 +42,7 @@ const Profile = () => {
           <StyledProfile>
             <p>Имя пользователя: {userData.login}</p>
             <p>E-mail: {userData.user.new_email || userData.user.email}</p>
-            <p>Статус подтверждения почты: {userData.user.email_confirmed_at ? <span className="text-green-500"> подтверждена! </span> : <span className="text-red-500"> не подтверждена! </span>}</p>
-            {!userData.user.email_confirmed_at && <button onClick={() => sendVerefyMessage()}>Подтвердить почту</button>}
-            <p>Дата регистрации: {creationDate && creationDate.getDate()}.{creationDate && creationDate.getMonth() < 9 ? '0' + creationDate.getMonth() : creationDate && creationDate.getMonth()}.{creationDate && creationDate.getFullYear()}</p>
+            <p>Дата регистрации: {creationDate}</p>
             
             <StyledButton onClick={() => changeModal()}>Изменить данные профиля</StyledButton>
           </StyledProfile>

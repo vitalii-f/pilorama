@@ -19,7 +19,7 @@ const SignUpSchema = Yup.object().shape({
     .required('Обязательное поле'),
 })
 
-function SignUp() {
+const SignUp = () => {
   const [errorCode, setErrorCode] = useState<string>('')
 
   const dispatch = useAppDispatch()

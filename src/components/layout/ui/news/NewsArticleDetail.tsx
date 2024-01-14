@@ -14,7 +14,7 @@ import ReportForm from '@/components/reportForm/ReportForm'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 
-function NewsArticleDetail() {
+const NewsArticleDetail = () => {
   const { id } = useParams()
 
   const isReportFormOpened = useSelector((state: RootState) => state.reportSlice.isOpened)

@@ -1,6 +1,6 @@
 import NewsFeed from "@/components/layout/ui/news/NewsFeed"
 
-function ArticlesPage() {
+const ArticlesPage = () => {
   return (
     <>
       <NewsFeed />

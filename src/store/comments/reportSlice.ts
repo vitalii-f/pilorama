@@ -3,13 +3,11 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 interface ReportSliceProps {
   isOpened?: boolean
   target_id: number | null
-  // target_text: string
 }
 
 const initialState: ReportSliceProps = {
     isOpened: false,
     target_id: null,
-    // target_text: ''
 }
 
 export const reportSlice = createSlice({
@@ -25,7 +23,6 @@ export const reportSlice = createSlice({
     }
   },
 })
-
 
 export const { openReportForm, closeReportForm } = reportSlice.actions
 export default reportSlice.reducer

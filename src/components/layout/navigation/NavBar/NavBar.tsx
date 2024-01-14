@@ -7,7 +7,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SignOutButton from '../../ui/auth/SignOutButton';
 import NavBarLoader from './NavBar.skeleton';
 import { StlyedNavLink, StyledDesktopNav, StyledDesktopUl, StyledLogo, StyledLogoText, StyledMobileLi, StyledMobileNav, StyledMobileUl } from './NavBar.styled';
-import CottageIcon from '@mui/icons-material/Cottage';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -32,7 +31,6 @@ const mobileMenu = (
             <StyledLogoText>Pilorama-news</StyledLogoText>
         <Toolbar />
         <StyledMobileUl>
-            <StyledMobileLi><CottageIcon /><StlyedNavLink to='/'>Главная</StlyedNavLink></StyledMobileLi>
             <StyledMobileLi><NewspaperIcon /><StlyedNavLink to='/articles'>Статьи</StlyedNavLink></StyledMobileLi>
         {userData.user
             ? <StyledMobileLi><AccountCircleIcon /><StlyedNavLink to='/profile'>Профиль</StlyedNavLink></StyledMobileLi>
@@ -72,7 +70,6 @@ return (
         <StyledDesktopNav>
             <Link to='/'><StyledLogo src={logo} alt="Logo"/></Link>
             <StyledDesktopUl>
-                <li><StlyedNavLink to='/'>Главная</StlyedNavLink></li>
                 <li><StlyedNavLink to='/articles'>Статьи</StlyedNavLink></li>
                 {userData.user
                     ? <li><StlyedNavLink to='/profile'>Профиль</StlyedNavLink></li>

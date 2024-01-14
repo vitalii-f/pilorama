@@ -31,3 +31,8 @@ export const StyledSelect = styled.select`
     height: 35px;
   }
 `
+
+export const PaginateWrapper = styled.div`
+display: flex;
+align-items: center;
+`

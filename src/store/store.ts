@@ -1,12 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './user/userSlice'
-import reportReducer from './user/reportSlice'
+import reportReducer from './comments/reportSlice'
+import dialogMenuReducer from './comments/dialogMenuSlice'
+
 import { useDispatch } from 'react-redux'
 
 const store = configureStore({
   reducer: {
     userSlice: userReducer,
     reportSlice: reportReducer,
+    dialogMenuSlice: dialogMenuReducer,
   },
 })
 

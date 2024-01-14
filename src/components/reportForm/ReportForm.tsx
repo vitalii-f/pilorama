@@ -2,7 +2,7 @@ import { FormikErrors, useFormik } from 'formik'
 import { ReportType } from '@/utils/interfaces/interfaces'
 import styled from 'styled-components'
 import { useDispatch } from 'react-redux'
-import { closeReportForm } from '@/store/user/reportSlice'
+import { closeReportForm } from '@/store/comments/reportSlice'
 import { DatabaseService } from '@/services/database.service'
 
 interface ReportFormProps {
@@ -11,12 +11,12 @@ interface ReportFormProps {
 }
 
 interface ReportFormInitialProps {
-    text: string
+  text: string
 }
 
 enum ReportTypeEnum {
   'comment' = 'комментарий',
-  'article' = 'статью'
+  'article' = 'статью',
 }
 
 const ReportBackdrop = styled.div`
@@ -37,16 +37,16 @@ const ReportBackdrop = styled.div`
 `
 
 const ReportWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
 
-    width: 100%;
-    max-width: 900px;
-    padding: 20px 20px;
-    
-    border-radius: 10px;
-    background-color: var(--color-bg-dark);
+  width: 100%;
+  max-width: 900px;
+  padding: 20px 20px;
+
+  border-radius: 10px;
+  background-color: var(--color-bg-dark);
 `
 
 const ReportTitle = styled.div``
@@ -64,37 +64,36 @@ const ReportLabel = styled.label`
 `
 
 const ReportInput = styled.input`
-    width: 100%;
+  width: 100%;
 `
 
 const ReportButton = styled.button`
   && {
     height: fit-content;
     padding: 0.3em 0.6em;
-
   }
 `
 
 const ReportControl = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 `
 
 const ReportForm = ({ target_id, type }: ReportFormProps) => {
   const dispatch = useDispatch()
   const formik = useFormik<ReportFormInitialProps>({
     initialValues: {
-        text: ''
+      text: '',
     },
     validate: (values) => {
-        const errors: FormikErrors<ReportFormInitialProps> = {}
-        if (!values.text) {
-            errors.text = 'Обязательное поле для ввода'
-        } else if (values.text.length < 5) {
-            errors.text = 'Минимум 5 символов для ввода'
-        }
-        return errors
+      const errors: FormikErrors<ReportFormInitialProps> = {}
+      if (!values.text) {
+        errors.text = 'Обязательное поле для ввода'
+      } else if (values.text.length < 5) {
+        errors.text = 'Минимум 5 символов для ввода'
+      }
+      return errors
     },
     onSubmit: async (data) => {
       await DatabaseService.sendReport(target_id, data.text)
@@ -119,10 +118,17 @@ const ReportForm = ({ target_id, type }: ReportFormProps) => {
         <StyledForm onSubmit={formik.handleSubmit}>
           <ReportLabel>
             <p>Текст жалобы:</p>
-            <ReportInput type='text' name='text' autoComplete='off' onChange={formik.handleChange} />
+            <ReportInput
+              type='text'
+              name='text'
+              autoComplete='off'
+              onChange={formik.handleChange}
+            />
           </ReportLabel>
           <ReportControl>
-            <ReportButton type='reset' onClick={handleClose}>Отмена</ReportButton>
+            <ReportButton type='reset' onClick={handleClose}>
+              Отмена
+            </ReportButton>
             <ReportButton type='submit'>Отправить</ReportButton>
           </ReportControl>
         </StyledForm>
